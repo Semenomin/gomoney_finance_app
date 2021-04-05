@@ -1,0 +1,40 @@
+name: gomoney_finance_app
+description: A new Flutter application.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_screenutil: ^5.0.0-nullsafety.11
+  shared_preferences: ^2.0.5
+  cupertino_icons: ^1.0.2
+  google_sign_in: ^5.0.1
+  firebase_core: ^1.0.2
+  firebase_auth: ^1.0.1
+  package_info: ^2.0.0
+  line_icons: ^2.0.0
+  bot_toast: ^4.0.1
+  get_it: ^6.0.0
+  http: ^0.13.1
+  dio: ^4.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+  - fonts/MyFlutterApp.ttf
+  fonts: 
+  - family: Prompt
+    fonts:
+        - asset: fonts/Prompt-Regular.ttf
+        - asset: fonts/Prompt-Bold.ttf
+          weight: 800
