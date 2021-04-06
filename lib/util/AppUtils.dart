@@ -1,20 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'StyleUtils.dart';
 
 class AppUtils {
   static Widget emptyContainer(double width, double height) {
     return Container(width: width, height: height);
   }
 
-  static Widget textForm(
-      String hint, TextEditingController controller, TextInputType textType) {
+  static Widget textForm(String hint, TextEditingController controller,
+      TextInputType textType, Color color) {
     return Container(
       padding: EdgeInsets.all(20),
       child: Theme(
-        data: ThemeData(
-          primaryColor: StyleUtil.secondaryColor,
-        ),
+        data: ThemeData(primaryColor: color, hintColor: color),
         child: TextFormField(
             controller: controller,
             keyboardType: textType,
@@ -29,6 +26,7 @@ class AppUtils {
             ),
             style: TextStyle(
               fontFamily: "Prompt",
+              color: color,
             )),
       ),
     );

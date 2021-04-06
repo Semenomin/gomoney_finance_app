@@ -30,6 +30,10 @@ class MyApp extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return MaterialApp(
+                            builder: (context, child) {
+                              child = botToastBuilder(context, child);
+                              return child;
+                            },
                             title: 'Flutter Demo',
                             theme: ThemeData(
                                 primaryColor: StyleUtil.primaryColor,

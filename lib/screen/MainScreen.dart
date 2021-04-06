@@ -1,7 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/AboutPage.dart';
+import 'package:gomoney_finance_app/page/SettingsPage.dart';
+import 'package:gomoney_finance_app/screen/LoginScreen.dart';
+import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -9,49 +15,53 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  Widget _page = SettingsPage();
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      drawer: _buildDrawer(),
-      body: Builder(
-        builder: (context) => Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [StyleUtil.primaryColor, Colors.yellow.shade700])),
-          child: Column(
-            children: [
-              InkWell(
-                onTap: () => Scaffold.of(context).openDrawer(),
-                child: Container(
-                  height: 60.h,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        height: double.infinity,
-                        width: 60.h,
-                        child: FittedBox(
-                          child: Icon(
-                            Icons.menu,
-                            color: StyleUtil.secondaryColor,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: SafeArea(
+          child: Scaffold(
+        drawer: _buildDrawer(),
+        body: Builder(
+          builder: (context) => Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [StyleUtil.primaryColor, Colors.yellow.shade700])),
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                  child: Container(
+                    height: 60.h,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          height: double.infinity,
+                          width: 60.h,
+                          child: FittedBox(
+                            child: Icon(
+                              Icons.menu,
+                              color: StyleUtil.secondaryColor,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: AboutPage(),
-              )
-            ],
+                Expanded(
+                  child: _page,
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 
   Widget _buildDrawer() {
@@ -107,6 +117,22 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   ListTile(
                     title: Text(
+                      'Settings',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 25.w,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _page = SettingsPage();
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
                       'About',
                       style: TextStyle(
                         color: StyleUtil.primaryColor,
@@ -114,7 +140,12 @@ class _MainScreenState extends State<MainScreen> {
                         fontFamily: "Prompt",
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        _page = AboutPage();
+                      });
+                      Navigator.pop(context);
+                    },
                   ),
                 ],
               ),
@@ -136,8 +167,14 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ],
               ),
-              onTap: () {
-                print("logOut");
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                await GoogleSignIn().signOut();
+                GetIt.I<PreferencesService>().deleteToken();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
               },
             ),
           ],
