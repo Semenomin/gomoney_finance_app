@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/dialogs/AddAmount.dart';
@@ -44,16 +45,20 @@ class DebtCard extends StatelessWidget {
                   Expanded(child: Container()),
                   Visibility(
                     visible: !isInitial,
-                    child: RawMaterialButton(
-                      onPressed: () => AreYouSure(context, onTap),
-                      elevation: 4.0,
-                      fillColor: StyleUtil.primaryColor,
-                      child: Icon(
-                        Icons.close,
-                        size: 40.0,
-                        color: StyleUtil.secondaryColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: RawMaterialButton(
+                        constraints: BoxConstraints(minWidth: 0, minHeight: 0),
+                        onPressed: () => AreYouSure(context, onTap),
+                        elevation: 4.0,
+                        fillColor: StyleUtil.primaryColor,
+                        child: Icon(
+                          Icons.close,
+                          size: 35.w,
+                          color: StyleUtil.secondaryColor,
+                        ),
+                        shape: CircleBorder(),
                       ),
-                      shape: CircleBorder(),
                     ),
                   ),
                 ],

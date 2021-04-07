@@ -22,6 +22,7 @@ dependencies:
   url_launcher: ^6.0.3
   line_icons: ^2.0.1
   bot_toast: ^4.0.1
+  fl_chart: ^0.35.0
   get_it: ^6.0.0
   http: ^0.13.1
   dio: ^4.0.0

@@ -1,2 +1,2 @@
 enum OperationType { EXPENSE, INCOME }
-enum Currencies { RUB, USD }
+enum ChartType { CIRCLE, LINEAR, BAR }

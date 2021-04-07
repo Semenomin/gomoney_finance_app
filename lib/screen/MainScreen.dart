@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/AboutPage.dart';
+import 'package:gomoney_finance_app/page/ChartsPage.dart';
 import 'package:gomoney_finance_app/page/DebtsPage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
@@ -105,6 +106,22 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     ),
                     onTap: () {},
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Charts',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 25.w,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _page = ChartsPage();
+                      });
+                      Navigator.pop(context);
+                    },
                   ),
                   ListTile(
                     title: Text(

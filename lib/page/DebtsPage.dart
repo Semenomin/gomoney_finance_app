@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/Enums.dart';
-import 'package:gomoney_finance_app/widget/debtScreen/DebtCard.dart';
-import 'package:gomoney_finance_app/widget/debtScreen/DebtHistoryListTile.dart';
+import 'package:gomoney_finance_app/widget/DebtPage/DebtCard.dart';
+import 'package:gomoney_finance_app/widget/DebtPage/DebtHistoryListTile.dart';
 
 class DebtsPage extends StatefulWidget {
   @override
