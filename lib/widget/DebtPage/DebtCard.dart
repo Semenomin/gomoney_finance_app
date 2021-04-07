@@ -153,7 +153,7 @@ class DebtCard extends StatelessWidget {
       );
     } else {
       return InkWell(
-        onTap: () => AddUser(context),
+        onTap: () => AddUser(context, "ADD DEBTOR", () {}),//todo
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(

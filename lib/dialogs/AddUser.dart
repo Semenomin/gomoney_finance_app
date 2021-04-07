@@ -5,7 +5,7 @@ import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddUser {
-  AddUser(context) {
+  AddUser(context, title, onTap) {
     TextEditingController _userController = TextEditingController();
     showMaterialModalBottomSheet(
       expand: true,
@@ -26,7 +26,7 @@ class AddUser {
                       AppUtils.emptyContainer(double.infinity, 20.h),
                       Container(
                         padding: EdgeInsets.all(5),
-                        child: Text("ADD DEBTOR",
+                        child: Text(title,
                             style: TextStyle(
                                 fontFamily: "Prompt",
                                 fontSize: 30.w,
@@ -38,7 +38,7 @@ class AddUser {
                       Container(
                         padding: EdgeInsets.all(20),
                         child: InkWell(
-                          onTap: () {},
+                          onTap: onTap,
                           child: Container(
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.primaryColor),

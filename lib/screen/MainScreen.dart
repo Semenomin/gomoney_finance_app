@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/AboutPage.dart';
+import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/page/ChartsPage.dart';
 import 'package:gomoney_finance_app/page/DebtsPage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
@@ -95,17 +96,23 @@ class _MainScreenState extends State<MainScreen> {
             ),
             Expanded(
               child: ListView(
+                physics: BouncingScrollPhysics(),
                 children: [
                   ListTile(
                     title: Text(
-                      'First Menu Item',
+                      'Categories',
                       style: TextStyle(
                         color: StyleUtil.primaryColor,
                         fontSize: 25.w,
                         fontFamily: "Prompt",
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        _page = CategoriesPage();
+                      });
+                      Navigator.pop(context);
+                    },
                   ),
                   ListTile(
                     title: Text(
