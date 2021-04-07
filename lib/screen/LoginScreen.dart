@@ -2,18 +2,18 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/dialogs/RegisterAndLogin.dart';
+import 'package:gomoney_finance_app/dialogs/RestorePassword.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gomoney_finance_app/screen/MainScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -34,7 +34,39 @@ class LoginScreen extends StatelessWidget {
                       width: 100.w,
                       child: InkWell(
                         onTap: () {
-                          showRegisterSheet(context, "Register");
+                          RegisterAndLogin(
+                            context,
+                            "Register",
+                            () async {
+                              try {
+                                String email = _emailController.text;
+                                String password = _passwordController.text;
+                                UserCredential userCredential =
+                                    await FirebaseAuth.instance
+                                        .createUserWithEmailAndPassword(
+                                            email: email, password: password);
+                                GetIt.I<PreferencesService>()
+                                    .setToken(userCredential.user!.uid);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MainScreen()),
+                                );
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'weak-password') {
+                                  BotToast.showText(
+                                      text:
+                                          "The password provided is too weak");
+                                } else if (e.code == 'email-already-in-use') {
+                                  BotToast.showText(
+                                      text:
+                                          "The account already exists for that email");
+                                }
+                              } catch (e) {
+                                BotToast.showText(text: "Wrong Register");
+                              }
+                            },
+                          );
                         },
                         child: Container(
                           decoration: StyleUtil.rowndedBoxWithShadow
@@ -56,9 +88,8 @@ class LoginScreen extends StatelessWidget {
                       height: 50.h,
                       width: 200.w,
                       child: InkWell(
-                        onTap: () {
-                          showForgetSheet(context, "Restore Password");
-                        },
+                        onTap: () =>
+                            RestorePassword(context, "Restore Password"),
                         child: Container(
                           decoration: StyleUtil.rowndedBoxWithShadow
                               .copyWith(color: StyleUtil.secondaryColor),
@@ -254,163 +285,6 @@ class LoginScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Future showRegisterSheet(BuildContext context, String title) {
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
-    return showMaterialModalBottomSheet(
-      expand: true,
-      context: context,
-      builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
-        child: Column(
-          children: [
-            AppUtils.emptyContainer(double.infinity, 70.h),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: StyleUtil.secondaryColor,
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Column(
-                    children: [
-                      AppUtils.emptyContainer(double.infinity, 20.h),
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        child: Text(title,
-                            style: TextStyle(
-                                fontFamily: "Prompt",
-                                fontSize: 40.h,
-                                color: StyleUtil.primaryColor,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      AppUtils.textForm("Email", _emailController,
-                          TextInputType.emailAddress, StyleUtil.primaryColor),
-                      AppUtils.textForm(
-                          "Password",
-                          _passwordController,
-                          TextInputType.visiblePassword,
-                          StyleUtil.primaryColor),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: InkWell(
-                          onTap: () async {
-                            try {
-                              String email = _emailController.text;
-                              String password = _passwordController.text;
-                              UserCredential userCredential = await FirebaseAuth
-                                  .instance
-                                  .createUserWithEmailAndPassword(
-                                      email: email, password: password);
-                              GetIt.I<PreferencesService>()
-                                  .setToken(userCredential.user!.uid);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MainScreen()),
-                              );
-                            } on FirebaseAuthException catch (e) {
-                              if (e.code == 'weak-password') {
-                                BotToast.showText(
-                                    text: "The password provided is too weak");
-                              } else if (e.code == 'email-already-in-use') {
-                                BotToast.showText(
-                                    text:
-                                        "The account already exists for that email");
-                              }
-                            } catch (e) {
-                              BotToast.showText(text: "Wrong Register");
-                            }
-                          },
-                          child: Container(
-                            decoration: StyleUtil.rowndedBoxWithShadow
-                                .copyWith(color: StyleUtil.primaryColor),
-                            child: Center(
-                              child: Text("GO",
-                                  style: TextStyle(
-                                      fontSize: 40,
-                                      fontFamily: "Prompt",
-                                      fontWeight: FontWeight.bold,
-                                      color: StyleUtil.secondaryColor)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future showForgetSheet(BuildContext context, String title) {
-    TextEditingController _emailController = TextEditingController();
-    return showMaterialModalBottomSheet(
-      expand: true,
-      context: context,
-      builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
-        child: Column(
-          children: [
-            AppUtils.emptyContainer(double.infinity, 70.h),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: StyleUtil.secondaryColor,
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Column(
-                    children: [
-                      AppUtils.emptyContainer(double.infinity, 20.h),
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        child: Text(title,
-                            style: TextStyle(
-                                fontFamily: "Prompt",
-                                fontSize: 30.w,
-                                color: StyleUtil.primaryColor,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      AppUtils.textForm("Email", _emailController,
-                          TextInputType.emailAddress, StyleUtil.primaryColor),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: InkWell(
-                          onTap: () async {
-                            try {
-                              String email = _emailController.text;
-                              await FirebaseAuth.instance
-                                  .sendPasswordResetEmail(email: email);
-                              Navigator.pop(context);
-                              BotToast.showText(text: "Check your email");
-                            } catch (e) {
-                              BotToast.showText(text: "Wrong Email");
-                            }
-                          },
-                          child: Container(
-                            decoration: StyleUtil.rowndedBoxWithShadow
-                                .copyWith(color: StyleUtil.primaryColor),
-                            child: Center(
-                              child: Text("GO",
-                                  style: TextStyle(
-                                      fontSize: 40,
-                                      fontFamily: "Prompt",
-                                      fontWeight: FontWeight.bold,
-                                      color: StyleUtil.secondaryColor)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
-          ],
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/AboutPage.dart';
+import 'package:gomoney_finance_app/page/DebtsPage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
@@ -22,6 +23,7 @@ class _MainScreenState extends State<MainScreen> {
       onWillPop: () async => false,
       child: SafeArea(
           child: Scaffold(
+        resizeToAvoidBottomInset: false,
         drawer: _buildDrawer(),
         body: Builder(
           builder: (context) => Container(
@@ -106,14 +108,19 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   ListTile(
                     title: Text(
-                      'Second Menu Item',
+                      'Debts',
                       style: TextStyle(
                         color: StyleUtil.primaryColor,
                         fontSize: 25.w,
                         fontFamily: "Prompt",
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      setState(() {
+                        _page = DebtsPage();
+                      });
+                      Navigator.pop(context);
+                    },
                   ),
                   ListTile(
                     title: Text(
