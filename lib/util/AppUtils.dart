@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppUtils {
   static Widget emptyContainer(double width, double height) {
@@ -9,7 +10,7 @@ class AppUtils {
   static Widget textForm(String hint, TextEditingController controller,
       TextInputType textType, Color color) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(15.w),
       child: Theme(
         data: ThemeData(primaryColor: color, hintColor: color),
         child: TextFormField(

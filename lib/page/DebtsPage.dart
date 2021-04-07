@@ -35,7 +35,7 @@ class _DebtsPageState extends State<DebtsPage> {
                   return DebtCard(
                     name: "All",
                     income: 200,
-                    expense: 20000,
+                    expense: 200002222222,
                     currensy: "RUB",
                     isInitial: true,
                     isPlus: true,

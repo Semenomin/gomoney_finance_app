@@ -21,48 +21,48 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: SafeArea(
-          child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        drawer: _buildDrawer(),
-        body: Builder(
-          builder: (context) => Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [StyleUtil.primaryColor, Colors.yellow.shade700])),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  child: Container(
-                    height: 60.h,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          height: double.infinity,
-                          width: 60.h,
-                          child: FittedBox(
-                            child: Icon(
-                              Icons.menu,
-                              color: StyleUtil.secondaryColor,
+      child: Container(
+        color: StyleUtil.primaryColor,
+        child: SafeArea(
+            child: Scaffold(
+          drawerScrimColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
+          drawer: _buildDrawer(),
+          body: Builder(
+            builder: (context) => Container(
+              color: StyleUtil.primaryColor,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () => Scaffold.of(context).openDrawer(),
+                    child: Container(
+                      height: 60.h,
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            height: double.infinity,
+                            width: 60.h,
+                            child: FittedBox(
+                              child: Icon(
+                                Icons.menu,
+                                color: StyleUtil.secondaryColor,
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: _page,
-                )
-              ],
+                  Expanded(
+                    child: _page,
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      )),
+        )),
+      ),
     );
   }
 
