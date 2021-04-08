@@ -35,10 +35,10 @@ class DebtCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                      padding: EdgeInsets.all(15.w),
+                      padding: EdgeInsets.all(15.r),
                       child: Text(name,
                           style: TextStyle(
-                              fontSize: 20.w,
+                              fontSize: 20.r,
                               fontFamily: "Prompt",
                               fontWeight: FontWeight.bold,
                               color: StyleUtil.primaryColor))),
@@ -54,7 +54,7 @@ class DebtCard extends StatelessWidget {
                         fillColor: StyleUtil.primaryColor,
                         child: Icon(
                           Icons.close,
-                          size: 35.w,
+                          size: 35.r,
                           color: StyleUtil.secondaryColor,
                         ),
                         shape: CircleBorder(),
@@ -83,7 +83,7 @@ class DebtCard extends StatelessWidget {
                                     child: Center(
                                   child: Icon(Icons.arrow_upward,
                                       color: StyleUtil.primaryColor,
-                                      size: 35.w),
+                                      size: 35.r),
                                 )),
                               ),
                               Expanded(
@@ -95,7 +95,7 @@ class DebtCard extends StatelessWidget {
                                       child: Text(
                                           expense.toString() + " " + currensy,
                                           style: TextStyle(
-                                              fontSize: 20.w,
+                                              fontSize: 20.r,
                                               fontFamily: "Prompt",
                                               fontWeight: FontWeight.bold,
                                               color: StyleUtil.primaryColor))),
@@ -121,7 +121,7 @@ class DebtCard extends StatelessWidget {
                                     child: Center(
                                   child: Icon(Icons.arrow_downward,
                                       color: StyleUtil.primaryColor,
-                                      size: 35.w),
+                                      size: 35.r),
                                 )),
                               ),
                               Expanded(
@@ -133,7 +133,7 @@ class DebtCard extends StatelessWidget {
                                       child: Text(
                                           income.toString() + " " + currensy,
                                           style: TextStyle(
-                                              fontSize: 20.w,
+                                              fontSize: 20.r,
                                               fontFamily: "Prompt",
                                               fontWeight: FontWeight.bold,
                                               color: StyleUtil.primaryColor))),
@@ -153,7 +153,7 @@ class DebtCard extends StatelessWidget {
       );
     } else {
       return InkWell(
-        onTap: () => AddUser(context, "ADD DEBTOR", () {}),//todo
+        onTap: () => AddUser(context, "ADD DEBTOR", () {}), //todo
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
@@ -163,7 +163,7 @@ class DebtCard extends StatelessWidget {
             child: Center(
               child: Center(
                 child:
-                    Icon(Icons.add, color: StyleUtil.primaryColor, size: 60.w),
+                    Icon(Icons.add, color: StyleUtil.primaryColor, size: 60.r),
               ),
             ),
           ),

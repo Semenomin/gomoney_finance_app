@@ -18,13 +18,13 @@ class BackupScreen extends StatelessWidget {
               InkWell(
                 onTap: () => Navigator.pop(context),
                 child: Container(
-                  height: 60.h,
+                  height: 60.r,
                   child: Row(
                     children: [
                       Container(
                         padding: EdgeInsets.all(10),
                         height: double.infinity,
-                        width: 60.h,
+                        width: 60.r,
                         child: FittedBox(
                           child: Icon(
                             Icons.arrow_back,

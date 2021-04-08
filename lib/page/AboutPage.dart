@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
                 child: Text(
                   "GOMONEY",
                   style: TextStyle(
-                      fontSize: 55.w,
+                      fontSize: 55.r,
                       fontFamily: "Prompt",
                       fontWeight: FontWeight.bold,
                       color: StyleUtil.secondaryColor),
@@ -31,13 +31,14 @@ class AboutPage extends StatelessWidget {
           ),
           Expanded(
               child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Container(
+              padding: EdgeInsets.all(10.r),
               decoration: BoxDecoration(
                   color: StyleUtil.secondaryColor,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(60),
-                      topRight: Radius.circular(60)),
+                      topLeft: Radius.circular(60.r),
+                      topRight: Radius.circular(60.r)),
                   boxShadow: [
                     BoxShadow(
                         offset: Offset(0, -5),
@@ -49,7 +50,7 @@ class AboutPage extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        AppUtils.emptyContainer(double.infinity, 20.h),
+                        AppUtils.emptyContainer(double.infinity, 20.r),
                         ListTile(
                           title: Text(
                             "App : " +
@@ -57,7 +58,7 @@ class AboutPage extends StatelessWidget {
                                     .packageInfo!
                                     .appName,
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 20.r,
                                 fontFamily: "Prompt",
                                 color: StyleUtil.primaryColor),
                           ),
@@ -69,7 +70,7 @@ class AboutPage extends StatelessWidget {
                                     .packageInfo!
                                     .version,
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 20.r,
                                 fontFamily: "Prompt",
                                 color: StyleUtil.primaryColor),
                           ),
@@ -78,7 +79,7 @@ class AboutPage extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(bottom: 12),
+                    padding: EdgeInsets.only(bottom: 12.r),
                     child: Row(
                       children: [
                         Expanded(
@@ -94,10 +95,10 @@ class AboutPage extends StatelessWidget {
                             fillColor: StyleUtil.primaryColor,
                             child: Icon(
                               LineIcons.telegram,
-                              size: 40.0,
+                              size: 40.0.r,
                               color: StyleUtil.secondaryColor,
                             ),
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(10.0.r),
                             shape: CircleBorder(),
                           ),
                         ),
@@ -113,10 +114,10 @@ class AboutPage extends StatelessWidget {
                             fillColor: StyleUtil.primaryColor,
                             child: Icon(
                               LineIcons.github,
-                              size: 40.0,
+                              size: 40.0.r,
                               color: StyleUtil.secondaryColor,
                             ),
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(10.0.r),
                             shape: CircleBorder(),
                           ),
                         ),
@@ -133,10 +134,10 @@ class AboutPage extends StatelessWidget {
                             fillColor: StyleUtil.primaryColor,
                             child: Icon(
                               LineIcons.instagram,
-                              size: 40.0,
+                              size: 40.0.r,
                               color: StyleUtil.secondaryColor,
                             ),
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(10.0.r),
                             shape: CircleBorder(),
                           ),
                         ),
@@ -153,10 +154,10 @@ class AboutPage extends StatelessWidget {
                             fillColor: StyleUtil.primaryColor,
                             child: Icon(
                               LineIcons.linkedin,
-                              size: 40.0,
+                              size: 40.0.r,
                               color: StyleUtil.secondaryColor,
                             ),
-                            padding: EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(10.0.r),
                             shape: CircleBorder(),
                           ),
                         ),

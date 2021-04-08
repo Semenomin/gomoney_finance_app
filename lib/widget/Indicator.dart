@@ -5,14 +5,12 @@ class Indicator extends StatelessWidget {
   final Color color;
   final String text;
   final bool isSquare;
-  final double size;
   final Color textColor;
 
   const Indicator({
     required this.color,
     required this.text,
     required this.isSquare,
-    this.size = 16,
     this.textColor = const Color(0xff505050),
   });
 
@@ -21,8 +19,8 @@ class Indicator extends StatelessWidget {
     return Row(
       children: <Widget>[
         Container(
-          width: size,
-          height: size,
+          width: 16.r,
+          height: 16.r,
           decoration: BoxDecoration(
             shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
             color: color,
@@ -34,7 +32,7 @@ class Indicator extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-              fontSize: 13.w, fontWeight: FontWeight.bold, color: textColor),
+              fontSize: 13.r, fontWeight: FontWeight.bold, color: textColor),
         )
       ],
     );

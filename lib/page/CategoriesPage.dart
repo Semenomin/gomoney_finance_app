@@ -31,6 +31,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
     Category(name: "Smokee", amount: 800, color: Colors.deepPurple),
     Category(name: "Smokeee", amount: 800, color: Colors.deepPurple),
   ];
+
+  bool isMenuFixed(BuildContext context) {
+    return MediaQuery.of(context).size.width > 500;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -47,7 +52,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     children: [
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(15.r),
                           child: Padding(
                             padding: const EdgeInsets.all(30.0),
                             child: PieChart(
@@ -61,7 +66,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         ),
                       ),
                       Container(
-                        width: 125.w,
+                        width: 125.r,
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: ListView.builder(
                             physics: BouncingScrollPhysics(),
@@ -95,7 +100,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       sliver: SliverGrid.count(
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          crossAxisCount: 4,
+                          crossAxisCount: !isMenuFixed(context) ? 4 : 6,
                           children:
                               List.generate(categories.length + 1, (index) {
                             if (index == categories.length)
@@ -121,7 +126,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           title: list[index].amount.toString(),
           radius: 50,
           titleStyle: TextStyle(
-              fontSize: 10.w,
+              fontSize: 10.r,
               color: StyleUtil.primaryColor,
               fontFamily: "Prompt",
               fontWeight: FontWeight.bold),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:o_color_picker/o_color_picker.dart';
 
@@ -64,57 +63,60 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       width: 115.h,
                       child: Row(
                         children: [
-                          InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ChooseIconScreen()),
-                                );
-                              },
-                              child: Container(
-                                width: 50.h,
-                                height: 60.h,
-                                child:
-                                    Icon(LineIcons.accessibleIcon, size: 35.w),
-                              )),
+                          Expanded(
+                            child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChooseIconScreen()),
+                                  );
+                                },
+                                child: Container(
+                                  height: 60.h,
+                                  child: Icon(LineIcons.accessibleIcon,
+                                      size: 35.w),
+                                )),
+                          ),
                           VerticalDivider(
                             color: Colors.black,
                           ),
-                          InkWell(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => Material(
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          OColorPicker(
-                                            selectedColor:
-                                                widget.category.color,
-                                            colors: primaryColorsPalette,
-                                            onColorChange: (color) {
-                                              setState(() {
-                                                widget.category.color = color;
-                                              });
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
+                          Expanded(
+                            child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => Material(
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            OColorPicker(
+                                              selectedColor:
+                                                  widget.category.color,
+                                              colors: primaryColorsPalette,
+                                              onColorChange: (color) {
+                                                setState(() {
+                                                  widget.category.color = color;
+                                                });
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 50.h,
-                                height: 60.h,
-                              ))
+                                  );
+                                },
+                                child: Container(
+                                  height: 60.h,
+                                )),
+                          )
                         ],
                       ),
                     ),
