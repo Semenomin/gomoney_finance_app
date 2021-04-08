@@ -23,6 +23,7 @@ class _DebtsPageState extends State<DebtsPage> {
         children: [
           Expanded(
               child: PageView.builder(
+            physics: BouncingScrollPhysics(),
             onPageChanged: (pageIndex) {
               //TODO
             },
@@ -62,6 +63,7 @@ class _DebtsPageState extends State<DebtsPage> {
               flex: 3,
               child: ListView.builder(
                 //Todo
+                physics: BouncingScrollPhysics(),
                 itemCount: names.length,
                 itemBuilder: (context, index) {
                   return DebtHistoryListTile(

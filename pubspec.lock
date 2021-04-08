@@ -247,6 +247,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  o_color_picker:
+    dependency: "direct main"
+    description:
+      name: o_color_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   package_info:
     dependency: "direct main"
     description:
