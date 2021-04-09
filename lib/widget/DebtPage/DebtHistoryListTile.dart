@@ -4,7 +4,7 @@ import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import '../../Enums.dart';
 
 class DebtHistoryListTile extends StatelessWidget {
-  final OperationType type;
+  final TransactionType type;
   final String name;
   final DateTime date;
   final double amount;
@@ -31,7 +31,7 @@ class DebtHistoryListTile extends StatelessWidget {
                         color: StyleUtil.secondaryColor)),
                 Expanded(child: Container()),
                 Icon(
-                  type == OperationType.EXPENSE
+                  type == TransactionType.EXPENSE
                       ? Icons.arrow_upward
                       : Icons.arrow_downward,
                   color: StyleUtil.secondaryColor,

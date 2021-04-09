@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/service/HIveService.dart';
 import 'package:gomoney_finance_app/service/PackageInfoService.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 
@@ -14,5 +15,10 @@ void setupLocator() async {
     final packageInfoService = PackageInfoService();
     await packageInfoService.init();
     return packageInfoService;
+  });
+  locator.registerSingletonAsync<HiveService>(() async {
+    final hiveService = HiveService();
+    await hiveService.init();
+    return hiveService;
   });
 }

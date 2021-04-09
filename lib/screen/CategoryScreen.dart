@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:o_color_picker/o_color_picker.dart';
-
 import 'ChooseIconScreen.dart';
 
 class CategoryScreen extends StatefulWidget {

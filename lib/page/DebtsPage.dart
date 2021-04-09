@@ -67,7 +67,7 @@ class _DebtsPageState extends State<DebtsPage> {
                 itemCount: names.length,
                 itemBuilder: (context, index) {
                   return DebtHistoryListTile(
-                    type: OperationType.EXPENSE,
+                    type: TransactionType.EXPENSE,
                     name: names[index],
                     date: DateTime.now(),
                     amount: 2000,
