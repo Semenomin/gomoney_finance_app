@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:gomoney_finance_app/dialogs/AddName.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gomoney_finance_app/widget/CategoriesPage/CategoryGridItem.dart';
@@ -100,9 +101,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               List.generate(categories.length + 1, (index) {
                             if (index == categories.length)
                               return CategoryGridItem(categories[0],
-                                  isInit: true);
+                                  isInit: true, onTap: () {
+                                AddName(context, "ADD CATEGORY", (controller) {
+                                  //TODO ADD CATEGORY
+                                });
+                              });
                             else
-                              return CategoryGridItem(categories[index]);
+                              return CategoryGridItem(categories[index],
+                                  onTap: () {
+                                //TODO OPEN CATEGORY page
+                              });
                           })),
                     ),
                   ],

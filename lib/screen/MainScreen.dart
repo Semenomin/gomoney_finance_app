@@ -5,6 +5,7 @@ import 'package:gomoney_finance_app/page/AboutPage.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/page/ChartsPage.dart';
 import 'package:gomoney_finance_app/page/DebtsPage.dart';
+import 'package:gomoney_finance_app/page/HomePage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
@@ -100,6 +101,22 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   ListTile(
                     title: Text(
+                      'Home',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 25.w,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _page = HomePage();
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
                       'Categories',
                       style: TextStyle(
                         color: StyleUtil.primaryColor,
@@ -180,6 +197,46 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ],
               ),
+            ),
+            ListTile(
+              title: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Icon(
+                      Icons.person,
+                      color: StyleUtil.primaryColor,
+                    ),
+                  ),
+                  Flexible(
+                    flex: 6,
+                    child: Text(
+                      'User Namewwwwwwwwwwwwwwwwww',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 17.w,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Container(width: 5.r)),
+                  Flexible(
+                    flex: 4,
+                    child: Text(
+                      '2000000' + " RUB",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 15.r,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () async {},
             ),
             ListTile(
               title: Row(

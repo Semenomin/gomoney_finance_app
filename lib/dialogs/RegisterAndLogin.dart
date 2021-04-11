@@ -8,6 +8,8 @@ class RegisterAndLogin {
   RegisterAndLogin(context, title, onTap) {
     TextEditingController _emailController = TextEditingController();
     TextEditingController _passwordController = TextEditingController();
+    TextEditingController _nameController = TextEditingController();
+
     showMaterialModalBottomSheet(
       expand: true,
       context: context,
@@ -41,10 +43,13 @@ class RegisterAndLogin {
                           _passwordController,
                           TextInputType.visiblePassword,
                           StyleUtil.primaryColor),
+                      AppUtils.textForm("Name", _nameController,
+                          TextInputType.text, StyleUtil.primaryColor),
                       Container(
                         padding: EdgeInsets.all(20),
                         child: InkWell(
-                          onTap: onTap,
+                          onTap: onTap(_emailController, _passwordController,
+                              _nameController),
                           child: Container(
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.primaryColor),

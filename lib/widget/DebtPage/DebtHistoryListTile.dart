@@ -23,13 +23,14 @@ class DebtHistoryListTile extends StatelessWidget {
         ListTile(
             title: Row(
               children: [
-                Text(name,
-                    style: TextStyle(
-                        fontSize: 30.w,
-                        fontFamily: "Prompt",
-                        fontWeight: FontWeight.bold,
-                        color: StyleUtil.secondaryColor)),
-                Expanded(child: Container()),
+                Expanded(
+                  child: Text(name,
+                      style: TextStyle(
+                          fontSize: 24.w,
+                          fontFamily: "Prompt",
+                          fontWeight: FontWeight.bold,
+                          color: StyleUtil.secondaryColor)),
+                ),
                 Icon(
                   type == TransactionType.EXPENSE
                       ? Icons.arrow_upward
@@ -43,13 +44,17 @@ class DebtHistoryListTile extends StatelessWidget {
               children: [
                 Text(date.toString().substring(0, 19),
                     style: TextStyle(color: StyleUtil.secondaryColor)),
-                Expanded(child: Container()),
-                Text(amount.toString() + " " + currency,
-                    style: TextStyle(
-                        fontSize: 15.w,
-                        fontFamily: "Prompt",
-                        fontWeight: FontWeight.bold,
-                        color: StyleUtil.secondaryColor)),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(amount.toString() + " " + currency,
+                        style: TextStyle(
+                            fontSize: 15.w,
+                            fontFamily: "Prompt",
+                            fontWeight: FontWeight.bold,
+                            color: StyleUtil.secondaryColor)),
+                  ),
+                ),
               ],
             ),
             onTap: () {}),

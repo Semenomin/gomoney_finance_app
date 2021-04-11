@@ -4,9 +4,9 @@ import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddUser {
-  AddUser(context, title, onTap) {
-    TextEditingController _userController = TextEditingController();
+class AddName {
+  AddName(context, title, void onTap(TextEditingController controller)) {
+    TextEditingController _nameController = TextEditingController();
     showMaterialModalBottomSheet(
       expand: true,
       context: context,
@@ -33,12 +33,12 @@ class AddUser {
                                 color: StyleUtil.primaryColor,
                                 fontWeight: FontWeight.bold)),
                       ),
-                      AppUtils.textForm("Name", _userController,
-                          TextInputType.number, StyleUtil.primaryColor),
+                      AppUtils.textForm("Name", _nameController,
+                          TextInputType.text, StyleUtil.primaryColor),
                       Container(
                         padding: EdgeInsets.all(20),
                         child: InkWell(
-                          onTap: onTap,
+                          onTap: () => onTap(_nameController),
                           child: Container(
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.primaryColor),

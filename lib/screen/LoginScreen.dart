@@ -2,11 +2,15 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/dialogs/AddName.dart';
 import 'package:gomoney_finance_app/dialogs/RegisterAndLogin.dart';
+import 'package:gomoney_finance_app/model/index.dart' as model;
 import 'package:gomoney_finance_app/dialogs/RestorePassword.dart';
+import 'package:gomoney_finance_app/service/FCMservice.dart';
+import 'package:gomoney_finance_app/service/PreferencesService.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gomoney_finance_app/screen/MainScreen.dart';
-import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,10 +44,13 @@ class LoginScreen extends StatelessWidget {
                             RegisterAndLogin(
                               context,
                               "Register",
-                              () async {
+                              (emailController, passwordController,
+                                  nameController) async {
                                 try {
-                                  String email = _emailController.text;
-                                  String password = _passwordController.text;
+                                  String email = emailController.text;
+                                  String name = nameController.text;
+                                  String password = passwordController.text;
+
                                   UserCredential userCredential =
                                       await FirebaseAuth
                                           .instance
@@ -51,6 +58,12 @@ class LoginScreen extends StatelessWidget {
                                               email: email, password: password);
                                   GetIt.I<PreferencesService>()
                                       .setToken(userCredential.user!.uid);
+                                  GetIt.I<SqliteService>().addUser(model.User(
+                                    id: userCredential.user!.uid,
+                                    pushId: (GetIt.I<FcmService>().token)!,
+                                    amountOfMoney: 0.0,
+                                    name: name,
+                                  ));
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -149,30 +162,40 @@ class LoginScreen extends StatelessWidget {
                               },
                               child: InkWell(
                                 onTap: () async {
-                                  try {
-                                    final GoogleSignInAccount googleUser =
-                                        (await GoogleSignIn().signIn())!;
-                                    final GoogleSignInAuthentication
-                                        googleAuth =
-                                        await googleUser.authentication;
-                                    final OAuthCredential credential =
-                                        GoogleAuthProvider.credential(
-                                      accessToken: googleAuth.accessToken,
-                                      idToken: googleAuth.idToken,
-                                    );
-                                    UserCredential userCredential =
-                                        await FirebaseAuth.instance
-                                            .signInWithCredential(credential);
-                                    GetIt.I<PreferencesService>()
-                                        .setToken(userCredential.user!.uid);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MainScreen()),
-                                    );
-                                  } catch (e) {
-                                    BotToast.showText(text: "Wrong Auth");
-                                  }
+                                  AddName(context, "ADD NAME",
+                                      (controller) async {
+                                    try {
+                                      final GoogleSignInAccount googleUser =
+                                          (await GoogleSignIn().signIn())!;
+                                      final GoogleSignInAuthentication
+                                          googleAuth =
+                                          await googleUser.authentication;
+                                      final OAuthCredential credential =
+                                          GoogleAuthProvider.credential(
+                                        accessToken: googleAuth.accessToken,
+                                        idToken: googleAuth.idToken,
+                                      );
+                                      UserCredential userCredential =
+                                          await FirebaseAuth.instance
+                                              .signInWithCredential(credential);
+                                      GetIt.I<PreferencesService>()
+                                          .setToken(userCredential.user!.uid);
+                                      GetIt.I<SqliteService>()
+                                          .addUser(model.User(
+                                        id: userCredential.user!.uid,
+                                        pushId: (GetIt.I<FcmService>().token)!,
+                                        amountOfMoney: 0.0,
+                                        name: controller.text,
+                                      ));
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MainScreen()),
+                                      );
+                                    } catch (e) {
+                                      BotToast.showText(text: "Wrong Auth");
+                                    }
+                                  });
                                 },
                                 child: Container(
                                   width: 60,
@@ -193,33 +216,43 @@ class LoginScreen extends StatelessWidget {
                             Expanded(
                                 child: InkWell(
                               onTap: () async {
-                                try {
-                                  String email = _emailController.text;
-                                  String password = _passwordController.text;
-                                  UserCredential userCredential =
-                                      await FirebaseAuth
-                                          .instance
-                                          .signInWithEmailAndPassword(
-                                              email: email, password: password);
-                                  GetIt.I<PreferencesService>()
-                                      .setToken(userCredential.user!.uid);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MainScreen()),
-                                  );
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'user-not-found') {
-                                    BotToast.showText(
-                                        text: "No user found for that email.");
-                                  } else if (e.code == 'wrong-password') {
-                                    BotToast.showText(
-                                        text:
-                                            "Wrong password provided for that user.");
-                                  } else {
-                                    BotToast.showText(text: "Wrong Auth");
+                                AddName(context, "ADD NAME",
+                                    (controller) async {
+                                  try {
+                                    String email = _emailController.text;
+                                    String password = _passwordController.text;
+                                    UserCredential userCredential =
+                                        await FirebaseAuth.instance
+                                            .signInWithEmailAndPassword(
+                                                email: email,
+                                                password: password);
+                                    GetIt.I<PreferencesService>()
+                                        .setToken(userCredential.user!.uid);
+                                    GetIt.I<SqliteService>().addUser(model.User(
+                                      id: userCredential.user!.uid,
+                                      pushId: (GetIt.I<FcmService>().token)!,
+                                      amountOfMoney: 0.0,
+                                      name: controller.text,
+                                    ));
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MainScreen()),
+                                    );
+                                  } on FirebaseAuthException catch (e) {
+                                    if (e.code == 'user-not-found') {
+                                      BotToast.showText(
+                                          text:
+                                              "No user found for that email.");
+                                    } else if (e.code == 'wrong-password') {
+                                      BotToast.showText(
+                                          text:
+                                              "Wrong password provided for that user.");
+                                    } else {
+                                      BotToast.showText(text: "Wrong Auth");
+                                    }
                                   }
-                                }
+                                });
                               },
                               child: Padding(
                                 padding:
@@ -241,29 +274,39 @@ class LoginScreen extends StatelessWidget {
                             )),
                             InkWell(
                               onTap: () async {
-                                try {
-                                  UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .signInAnonymously();
-                                  GetIt.I<PreferencesService>()
-                                      .setToken(userCredential.user!.uid);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MainScreen()),
-                                  );
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'user-not-found') {
-                                    BotToast.showText(
-                                        text: "No user found for that email.");
-                                  } else if (e.code == 'wrong-password') {
-                                    BotToast.showText(
-                                        text:
-                                            "Wrong password provided for that user.");
-                                  } else {
-                                    BotToast.showText(text: "Wrong Auth");
+                                AddName(context, "ADD NAME",
+                                    (controller) async {
+                                  try {
+                                    UserCredential userCredential =
+                                        await FirebaseAuth.instance
+                                            .signInAnonymously();
+                                    GetIt.I<PreferencesService>()
+                                        .setToken(userCredential.user!.uid);
+                                    GetIt.I<SqliteService>().addUser(model.User(
+                                      id: userCredential.user!.uid,
+                                      pushId: (GetIt.I<FcmService>().token)!,
+                                      amountOfMoney: 0.0,
+                                      name: controller.text,
+                                    ));
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MainScreen()),
+                                    );
+                                  } on FirebaseAuthException catch (e) {
+                                    if (e.code == 'user-not-found') {
+                                      BotToast.showText(
+                                          text:
+                                              "No user found for that email.");
+                                    } else if (e.code == 'wrong-password') {
+                                      BotToast.showText(
+                                          text:
+                                              "Wrong password provided for that user.");
+                                    } else {
+                                      BotToast.showText(text: "Wrong Auth");
+                                    }
                                   }
-                                }
+                                });
                               },
                               child: Container(
                                 width: 60,
