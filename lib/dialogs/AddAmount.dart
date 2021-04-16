@@ -5,7 +5,7 @@ import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddAmount {
-  AddAmount(context, title, onTap) {
+  AddAmount(context, title, void onTap(TextEditingController controller)) {
     TextEditingController _amountController = TextEditingController();
     showMaterialModalBottomSheet(
       expand: true,
@@ -38,7 +38,7 @@ class AddAmount {
                       Container(
                         padding: EdgeInsets.all(20),
                         child: InkWell(
-                          onTap: onTap,
+                          onTap: () => onTap(_amountController),
                           child: Container(
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.primaryColor),

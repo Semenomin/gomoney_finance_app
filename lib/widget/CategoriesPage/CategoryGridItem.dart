@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gomoney_finance_app/dialogs/AddUser.dart';
-import 'package:gomoney_finance_app/page/CategoriesPage.dart';
-import 'package:gomoney_finance_app/screen/CategoryScreen.dart';
+import 'package:gomoney_finance_app/model/Category.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
@@ -9,7 +7,9 @@ import 'package:line_icons/line_icons.dart';
 class CategoryGridItem extends StatelessWidget {
   final Category category;
   final bool isInit;
-  const CategoryGridItem(this.category, {this.isInit = false});
+  final Function onTap;
+  const CategoryGridItem(this.category,
+      {this.isInit = false, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -20,20 +20,14 @@ class CategoryGridItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          !isInit
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CategoryScreen(category)),
-                )
-              : AddUser(context, "ADD CATEGORY", () {}); //TODO
+          onTap();
         },
         child: Column(
           children: [
             Expanded(
               child: !isInit
                   ? Icon(
-                      LineIcons.sdCard,
+                      category.icon,
                       color: category.color,
                       size: 40.r,
                     )

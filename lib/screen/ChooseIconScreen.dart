@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/model/Category.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:o_color_picker/o_color_picker.dart';
 
 class ChooseIconScreen extends StatelessWidget {
+  final Category category;
+  ChooseIconScreen(this.category);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,7 +61,15 @@ class ChooseIconScreen extends StatelessWidget {
                             children: List.generate(
                                 LineIcons.values.keys.length, (index) {
                               return InkWell(
-                                onTap: () {}, //TODO
+                                onTap: () {
+                                  GetIt.I<SqliteService>().changeCategoryIcon(
+                                      category,
+                                      LineIcons.values.keys.elementAt(index));
+                                  Navigator.pop(
+                                      context,
+                                      LineIcons.values[LineIcons.values.keys
+                                          .elementAt(index)]);
+                                },
                                 child: Container(
                                   padding: EdgeInsets.all(10),
                                   decoration: StyleUtil.rowndedBoxWithShadow

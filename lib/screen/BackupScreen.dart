@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gomoney_finance_app/dialogs/Loading.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gomoney_finance_app/widget/backupScreen/BackupWidget.dart';
@@ -39,19 +40,12 @@ class BackupScreen extends StatelessWidget {
               Column(
                 children: [
                   Divider(),
-                  BackupWidget(title: "OneDrive", onTap: onTap),
-                  Divider(),
-                  BackupWidget(title: "Google Drive", onTap: onTap),
-                  Divider(),
-                  BackupWidget(title: "Yandex Disk", onTap: onTap),
+                  BackupWidget(
+                      title: "Google Drive", onTap: () => onTapGoogle(context)),
                   Divider(),
                 ],
               ),
               Expanded(child: Container()),
-              Divider(),
-              Visibility(child: ListTile()),
-              Divider(),
-              Visibility(child: ListTile()),
               Divider(),
               Visibility(child: ListTile())
             ],
@@ -60,8 +54,8 @@ class BackupScreen extends StatelessWidget {
       )),
     );
   }
-}
 
-void onTap() {
-  //TODO
+  void onTapGoogle(context) async {
+    Loading(context, "BACKUP");
+  }
 }

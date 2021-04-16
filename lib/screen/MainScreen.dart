@@ -1,13 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/model/User.dart' as model;
 import 'package:gomoney_finance_app/page/AboutPage.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/page/ChartsPage.dart';
 import 'package:gomoney_finance_app/page/DebtsPage.dart';
+import 'package:gomoney_finance_app/page/HomePage.dart';
+import 'package:gomoney_finance_app/page/LoadingPage.dart';
+import 'package:gomoney_finance_app/page/ProfilePage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -29,52 +34,37 @@ class _MainScreenState extends State<MainScreen> {
       onWillPop: () async => false,
       child: Container(
         color: StyleUtil.primaryColor,
-        child: Row(
-          children: [
-            isMenuFixed(context)
-                ? SafeArea(bottom: false, child: _buildDrawer())
-                : Container(),
-            Expanded(
-              child: SafeArea(
-                  bottom: false,
-                  child: Scaffold(
-                    drawerScrimColor: Colors.transparent,
-                    resizeToAvoidBottomInset: false,
-                    drawer: _buildDrawer(),
-                    body: Builder(
-                      builder: (context) => Container(
-                        color: StyleUtil.primaryColor,
-                        child: Column(
-                          children: [
-                            !isMenuFixed(context)
-                                ? InkWell(
-                                    onTap: () =>
-                                        Scaffold.of(context).openDrawer(),
-                                    child: Container(
-                                      height: 60.h,
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(10),
-                                            height: double.infinity,
-                                            width: 60.h,
-                                            child: FittedBox(
-                                              child: Icon(
-                                                Icons.menu,
-                                                color: StyleUtil.secondaryColor,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                            Expanded(
-                              child: _page,
-                            )
-                          ],
-                        ),
+        child: SafeArea(
+            child: Scaffold(
+          onDrawerChanged: (bo) {
+            setState(() {});
+          },
+          drawerScrimColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
+          drawer: _buildDrawer(),
+          body: Builder(
+            builder: (context) => Container(
+              color: StyleUtil.primaryColor,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () => Scaffold.of(context).openDrawer(),
+                    child: Container(
+                      height: 60.h,
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            height: double.infinity,
+                            width: 60.h,
+                            child: FittedBox(
+                              child: Icon(
+                                Icons.menu,
+                                color: StyleUtil.secondaryColor,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   )),
@@ -110,21 +100,37 @@ class _MainScreenState extends State<MainScreen> {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              Divider(
-                height: 1,
-              ),
-              Expanded(
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: [
-                    ListTile(
-                      title: Text(
-                        'Categories',
-                        style: TextStyle(
-                          color: StyleUtil.primaryColor,
-                          fontSize: 25.r,
-                          fontFamily: "Prompt",
-                        ),
+            ),
+            Divider(
+              height: 1,
+            ),
+            Expanded(
+              child: ListView(
+                physics: BouncingScrollPhysics(),
+                children: [
+                  ListTile(
+                    title: Text(
+                      'Home',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 25.w,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _page = HomePage();
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Categories',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 25.w,
+                        fontFamily: "Prompt",
                       ),
                       onTap: () {
                         setState(() {
@@ -200,11 +206,69 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 ),
               ),
-              ListTile(
-                title: Row(
-                  children: [
-                    Icon(
-                      Icons.logout,
+            ),
+            Divider(),
+            ListTile(
+              title: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Icon(
+                      Icons.person,
+                      color: StyleUtil.primaryColor,
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      GetIt.I<PreferencesService>().getName()!,
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 17.w,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Container()),
+                  Flexible(
+                    child: FutureBuilder(
+                        future: GetIt.I<SqliteService>().getUser(),
+                        builder: (context, AsyncSnapshot<model.User> user) {
+                          if (user.hasData) {
+                            return Text(
+                              user.data!.amountOfMoney.toStringAsFixed(2),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: StyleUtil.primaryColor,
+                                fontSize: 15.r,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Prompt",
+                              ),
+                            );
+                          } else
+                            return LoadingPage(StyleUtil.primaryColor);
+                        }),
+                  ),
+                ],
+              ),
+              onTap: () async {
+                setState(() {
+                  _page = ProfilePage();
+                });
+                Navigator.pop(context);
+              },
+            ),
+            Divider(),
+            ListTile(
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.logout,
+                    color: StyleUtil.primaryColor,
+                  ),
+                  Text(
+                    'LogOut',
+                    style: TextStyle(
                       color: StyleUtil.primaryColor,
                     ),
                     Text(
