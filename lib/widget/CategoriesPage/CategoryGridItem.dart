@@ -29,12 +29,12 @@ class CategoryGridItem extends StatelessWidget {
                   ? Icon(
                       category.icon,
                       color: category.color,
-                      size: 50.w,
+                      size: 40.r,
                     )
                   : Icon(
                       Icons.add,
                       color: StyleUtil.primaryColor,
-                      size: 50.w,
+                      size: 40.r,
                     ),
             ),
             Visibility(

@@ -22,6 +22,10 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
+bool isMenuFixed(BuildContext context) {
+  return MediaQuery.of(context).size.width > 500;
+}
+
 class _MainScreenState extends State<MainScreen> {
   Widget _page = SettingsPage();
   @override
@@ -63,40 +67,38 @@ class _MainScreenState extends State<MainScreen> {
                         ],
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: _page,
-                  )
-                ],
-              ),
+                  )),
             ),
-          ),
-        )),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildDrawer() {
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-          topRight: Radius.circular(50), bottomRight: Radius.circular(50)),
-      child: Drawer(
-          child: Container(
-        decoration: BoxDecoration(
-            color: StyleUtil.secondaryColor,
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(50),
-                bottomRight: Radius.circular(50))),
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              title: Text(
-                'GOMONEY',
-                style: TextStyle(
-                    color: StyleUtil.primaryColor,
-                    fontSize: 25.w,
-                    fontFamily: "Prompt",
-                    fontWeight: FontWeight.bold),
+    return Container(
+      color: StyleUtil.primaryColor,
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(50), bottomRight: Radius.circular(50)),
+        child: Drawer(
+            child: Container(
+          decoration: BoxDecoration(
+              color: StyleUtil.secondaryColor,
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(50),
+                  bottomRight: Radius.circular(50))),
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  'GOMONEY',
+                  style: TextStyle(
+                      color: StyleUtil.primaryColor,
+                      fontSize: 25.r,
+                      fontFamily: "Prompt",
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             Divider(
@@ -130,79 +132,79 @@ class _MainScreenState extends State<MainScreen> {
                         fontSize: 25.w,
                         fontFamily: "Prompt",
                       ),
+                      onTap: () {
+                        setState(() {
+                          _page = CategoriesPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        _page = CategoriesPage();
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Charts',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 25.w,
-                        fontFamily: "Prompt",
+                    ListTile(
+                      title: Text(
+                        'Charts',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          _page = ChartsPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        _page = ChartsPage();
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Debts',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 25.w,
-                        fontFamily: "Prompt",
+                    ListTile(
+                      title: Text(
+                        'Debts',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          _page = DebtsPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        _page = DebtsPage();
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Settings',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 25.w,
-                        fontFamily: "Prompt",
+                    ListTile(
+                      title: Text(
+                        'Settings',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          _page = SettingsPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        _page = SettingsPage();
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'About',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 25.w,
-                        fontFamily: "Prompt",
+                    ListTile(
+                      title: Text(
+                        'About',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          _page = AboutPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        _page = AboutPage();
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Divider(),
@@ -268,25 +270,31 @@ class _MainScreenState extends State<MainScreen> {
                     'LogOut',
                     style: TextStyle(
                       color: StyleUtil.primaryColor,
-                      fontSize: 15.w,
-                      fontFamily: "Prompt",
                     ),
-                  ),
-                ],
+                    Text(
+                      'LogOut',
+                      style: TextStyle(
+                        color: StyleUtil.primaryColor,
+                        fontSize: 15.r,
+                        fontFamily: "Prompt",
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                  await GoogleSignIn().signOut();
+                  GetIt.I<PreferencesService>().deleteToken();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
               ),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                await GoogleSignIn().signOut();
-                GetIt.I<PreferencesService>().deleteToken();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      )),
+            ],
+          ),
+        )),
+      ),
     );
   }
 }

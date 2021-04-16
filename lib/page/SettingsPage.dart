@@ -15,7 +15,7 @@ class SettingsPage extends StatelessWidget {
               children: [
                 Text("Backup",
                     style: TextStyle(
-                        fontSize: 30.w,
+                        fontSize: 30.r,
                         fontFamily: "Prompt",
                         fontWeight: FontWeight.bold,
                         color: StyleUtil.secondaryColor)),

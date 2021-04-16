@@ -14,7 +14,7 @@ class BackupWidget extends StatelessWidget {
           children: [
             Text(title,
                 style: TextStyle(
-                    fontSize: 30.w,
+                    fontSize: 30.r,
                     fontFamily: "Prompt",
                     fontWeight: FontWeight.bold,
                     color: StyleUtil.secondaryColor)),
@@ -22,7 +22,7 @@ class BackupWidget extends StatelessWidget {
             Icon(
               Icons.highlight_off_rounded,
               color: StyleUtil.secondaryColor,
-              size: 30.h,
+              size: 30.r,
             )
           ],
         ),

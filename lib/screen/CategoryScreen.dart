@@ -118,13 +118,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                         ],
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 50.h,
-                                height: 60.h,
-                              ))
+                                  );
+                                },
+                                child: Container(
+                                  height: 60.h,
+                                )),
+                          )
                         ],
                       ),
                     ),

@@ -36,7 +36,7 @@ class DebtHistoryListTile extends StatelessWidget {
                       ? Icons.arrow_upward
                       : Icons.arrow_downward,
                   color: StyleUtil.secondaryColor,
-                  size: 30.h,
+                  size: 30.r,
                 ),
               ],
             ),
