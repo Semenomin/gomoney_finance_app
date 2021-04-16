@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gomoney_finance_app/dialogs/RegisterAndLogin.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -27,11 +26,8 @@ class BackupWidget extends StatelessWidget {
             )
           ],
         ),
-        //TODO show if exists
         subtitle: Text("Last update : " + DateTime.now().toString(),
             style: TextStyle(color: StyleUtil.secondaryColor)),
-        onTap: () {
-          RegisterAndLogin(context, title, onTap);
-        });
+        onTap: () => onTap());
   }
 }

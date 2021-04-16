@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:gomoney_finance_app/page/CategoriesPage.dart';
+import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/dialogs/AddNameAndAmount.dart';
+import 'package:gomoney_finance_app/model/Category.dart';
+import 'package:gomoney_finance_app/model/FinTransaction.dart';
+import 'package:gomoney_finance_app/page/LoadingPage.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:line_icons/line_icons.dart';
+import 'package:gomoney_finance_app/widget/DebtPage/DebtHistoryListTile.dart';
 import 'package:o_color_picker/o_color_picker.dart';
+import 'package:uuid/uuid.dart';
+import '../Enums.dart';
 import 'ChooseIconScreen.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -67,14 +74,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ChooseIconScreen()),
-                                );
+                                      builder: (context) =>
+                                          ChooseIconScreen(widget.category)),
+                                ).then((value) => setState(() {
+                                      widget.category.icon = value;
+                                    }));
                               },
                               child: Container(
-                                width: 50.h,
-                                height: 60.h,
-                                child:
-                                    Icon(LineIcons.accessibleIcon, size: 35.w),
+                                width: 50.r,
+                                height: 60.r,
+                                child: Icon(widget.category.icon, size: 35.r),
                               )),
                           VerticalDivider(
                             color: Colors.black,
@@ -97,6 +106,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                 widget.category.color,
                                             colors: primaryColorsPalette,
                                             onColorChange: (color) {
+                                              GetIt.I<SqliteService>()
+                                                  .changeCategoryColor(
+                                                      widget.category, color);
                                               setState(() {
                                                 widget.category.color = color;
                                               });
@@ -120,12 +132,119 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ],
               ),
               Expanded(
-                child: Container(),
+                child: FutureBuilder(
+                    future: GetIt.I<SqliteService>()
+                        .getTransactions(category: widget.category),
+                    builder: (context,
+                        AsyncSnapshot<List<FinTransaction>> transactions) {
+                      if (transactions.hasData) {
+                        return ListView.builder(
+                            itemCount: transactions.data!.length,
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return DebtHistoryListTile(
+                                  type: transactions
+                                          .data![transactions.data!.length -
+                                              index -
+                                              1]
+                                          .isIncome
+                                      ? TransactionType.INCOME
+                                      : TransactionType.EXPENSE,
+                                  name: transactions
+                                      .data![
+                                          transactions.data!.length - index - 1]
+                                      .name,
+                                  date: transactions
+                                      .data![
+                                          transactions.data!.length - index - 1]
+                                      .date,
+                                  amount: transactions
+                                      .data![
+                                          transactions.data!.length - index - 1]
+                                      .amountOfMoney,
+                                  currency: "RUB");
+                            });
+                      } else
+                        return LoadingPage(StyleUtil.secondaryColor);
+                    }),
+              ),
+              Container(
+                height: 70.r,
+                color: StyleUtil.secondaryColor,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        AddNameAndAmount(context, "ADD INCOME", update,
+                            (nameController, amountController) {
+                          GetIt.I<SqliteService>().addTransaction(
+                              FinTransaction(
+                                  isIncome: true,
+                                  amountOfMoney:
+                                      double.parse(amountController.text),
+                                  name: nameController.text,
+                                  date: DateTime.now(),
+                                  id: Uuid().v4()),
+                              category: widget.category);
+                          Navigator.pop(context);
+                        });
+                      },
+                      child: Container(
+                        child: Center(
+                          child: Text("INCOME",
+                              style: TextStyle(
+                                  fontSize: 20.w,
+                                  fontFamily: "Prompt",
+                                  fontWeight: FontWeight.bold,
+                                  color: StyleUtil.primaryColor)),
+                        ),
+                      ),
+                    )),
+                    VerticalDivider(
+                      thickness: 3,
+                      color: StyleUtil.primaryColor,
+                    ),
+                    Expanded(
+                        child: InkWell(
+                      onTap: () {
+                        AddNameAndAmount(context, "ADD EXPENSE", update,
+                            (nameController, amountController) {
+                          GetIt.I<SqliteService>().addTransaction(
+                              FinTransaction(
+                                  isIncome: false,
+                                  amountOfMoney:
+                                      double.parse(amountController.text),
+                                  name: nameController.text,
+                                  date: DateTime.now(),
+                                  id: Uuid().v4()),
+                              category: widget.category);
+                          Navigator.pop(context);
+                        });
+                        setState(() {});
+                      },
+                      child: Container(
+                        child: Center(
+                          child: Text("EXPENSE",
+                              style: TextStyle(
+                                  fontSize: 20.w,
+                                  fontFamily: "Prompt",
+                                  fontWeight: FontWeight.bold,
+                                  color: StyleUtil.primaryColor)),
+                        ),
+                      ),
+                    )),
+                  ],
+                ),
               )
             ],
           ),
         ),
       )),
     );
+  }
+
+  void update() {
+    setState(() {});
   }
 }

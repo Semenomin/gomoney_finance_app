@@ -8,6 +8,8 @@ import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:gomoney_finance_app/widget/DebtPage/DebtHistoryListTile.dart';
 
+import 'LoadingPage.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -116,14 +118,26 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
-                      Container(
-                        child: Center(
-                          child: Text(date.toString().substring(0, 10),
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: "Prompt",
-                                  color: StyleUtil.secondaryColor)),
-                        ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_left,
+                            color: StyleUtil.secondaryColor,
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Center(
+                                child: Text(date.toString().substring(0, 10),
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: "Prompt",
+                                        color: StyleUtil.secondaryColor)),
+                              ),
+                            ),
+                          ),
+                          Icon(Icons.arrow_right,
+                              color: StyleUtil.secondaryColor)
+                        ],
                       ),
                       Expanded(
                         child: ListView.builder(
@@ -165,7 +179,7 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         } else
-          return CircularProgressIndicator();
+          return LoadingPage(StyleUtil.secondaryColor);
       },
     );
   }

@@ -12,10 +12,6 @@ class PreferencesService {
     deleteToken();
   }
 
-////////////////////////////////////////////////////////////////////////////////
-//*                                 Token
-////////////////////////////////////////////////////////////////////////////////
-
   void setToken(String token) {
     _prefs?.setString("token", token);
   }
@@ -26,5 +22,17 @@ class PreferencesService {
 
   void deleteToken() {
     _prefs?.remove("token");
+  }
+
+  void setName(String name) {
+    _prefs?.setString("name", name);
+  }
+
+  String? getName() {
+    return _prefs?.getString("name");
+  }
+
+  void deleteName() {
+    _prefs?.remove("name");
   }
 }

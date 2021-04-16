@@ -15,6 +15,8 @@ dependencies:
   shared_preferences: ^2.0.5
   modal_bottom_sheet: ^2.0.0
   firebase_messaging: ^9.1.1
+  permission_handler: ^6.1.1
+  flutter_archive: ^3.0.0
   cupertino_icons: ^1.0.2
   o_color_picker: ^1.0.1
   google_sign_in: ^5.0.1
@@ -25,10 +27,12 @@ dependencies:
   url_launcher: ^6.0.3
   hive_flutter: ^1.0.0
   line_icons: ^2.0.1
+  googleapis: ^2.0.0
   bot_toast: ^4.0.1
   fl_chart: ^0.35.0
   sqflite: ^2.0.0+3
   date_util: ^0.1.4
+  encrypt: ^5.0.0
   get_it: ^6.0.0
   http: ^0.13.1
   uuid: ^3.0.4

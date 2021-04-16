@@ -9,12 +9,16 @@ import 'package:gomoney_finance_app/dialogs/RestorePassword.dart';
 import 'package:gomoney_finance_app/service/FCMservice.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
+import 'package:gomoney_finance_app/util/GoogleHttpClient.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gomoney_finance_app/screen/MainScreen.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:googleapis/drive/v3.dart';
 import 'package:line_icons/line_icons.dart';
+
+import 'BackupScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -58,6 +62,7 @@ class LoginScreen extends StatelessWidget {
                                               email: email, password: password);
                                   GetIt.I<PreferencesService>()
                                       .setToken(userCredential.user!.uid);
+                                  GetIt.I<PreferencesService>().setName(name);
                                   GetIt.I<SqliteService>().addUser(model.User(
                                     id: userCredential.user!.uid,
                                     pushId: (GetIt.I<FcmService>().token)!,
@@ -165,8 +170,11 @@ class LoginScreen extends StatelessWidget {
                                   AddName(context, "ADD NAME",
                                       (controller) async {
                                     try {
+                                      final googleSignIn =
+                                          GoogleSignIn.standard(
+                                              scopes: [DriveApi.driveScope]);
                                       final GoogleSignInAccount googleUser =
-                                          (await GoogleSignIn().signIn())!;
+                                          (await googleSignIn.signIn())!;
                                       final GoogleSignInAuthentication
                                           googleAuth =
                                           await googleUser.authentication;
@@ -178,8 +186,13 @@ class LoginScreen extends StatelessWidget {
                                       UserCredential userCredential =
                                           await FirebaseAuth.instance
                                               .signInWithCredential(credential);
+                                      var client = GoogleHttpClient(
+                                          await googleUser.authHeaders);
+                                      var driveApi = DriveApi(client);
                                       GetIt.I<PreferencesService>()
                                           .setToken(userCredential.user!.uid);
+                                      GetIt.I<PreferencesService>()
+                                          .setName(controller.text);
                                       GetIt.I<SqliteService>()
                                           .addUser(model.User(
                                         id: userCredential.user!.uid,
@@ -194,6 +207,7 @@ class LoginScreen extends StatelessWidget {
                                       );
                                     } catch (e) {
                                       BotToast.showText(text: "Wrong Auth");
+                                      Navigator.pop(context);
                                     }
                                   });
                                 },
@@ -228,6 +242,8 @@ class LoginScreen extends StatelessWidget {
                                                 password: password);
                                     GetIt.I<PreferencesService>()
                                         .setToken(userCredential.user!.uid);
+                                    GetIt.I<PreferencesService>()
+                                        .setName(controller.text);
                                     GetIt.I<SqliteService>().addUser(model.User(
                                       id: userCredential.user!.uid,
                                       pushId: (GetIt.I<FcmService>().token)!,
@@ -244,12 +260,15 @@ class LoginScreen extends StatelessWidget {
                                       BotToast.showText(
                                           text:
                                               "No user found for that email.");
+                                      Navigator.pop(context);
                                     } else if (e.code == 'wrong-password') {
                                       BotToast.showText(
                                           text:
                                               "Wrong password provided for that user.");
+                                      Navigator.pop(context);
                                     } else {
                                       BotToast.showText(text: "Wrong Auth");
+                                      Navigator.pop(context);
                                     }
                                   }
                                 });
@@ -274,39 +293,11 @@ class LoginScreen extends StatelessWidget {
                             )),
                             InkWell(
                               onTap: () async {
-                                AddName(context, "ADD NAME",
-                                    (controller) async {
-                                  try {
-                                    UserCredential userCredential =
-                                        await FirebaseAuth.instance
-                                            .signInAnonymously();
-                                    GetIt.I<PreferencesService>()
-                                        .setToken(userCredential.user!.uid);
-                                    GetIt.I<SqliteService>().addUser(model.User(
-                                      id: userCredential.user!.uid,
-                                      pushId: (GetIt.I<FcmService>().token)!,
-                                      amountOfMoney: 0.0,
-                                      name: controller.text,
-                                    ));
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MainScreen()),
-                                    );
-                                  } on FirebaseAuthException catch (e) {
-                                    if (e.code == 'user-not-found') {
-                                      BotToast.showText(
-                                          text:
-                                              "No user found for that email.");
-                                    } else if (e.code == 'wrong-password') {
-                                      BotToast.showText(
-                                          text:
-                                              "Wrong password provided for that user.");
-                                    } else {
-                                      BotToast.showText(text: "Wrong Auth");
-                                    }
-                                  }
-                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BackupScreen()),
+                                );
                               },
                               child: Container(
                                 width: 60,
@@ -317,8 +308,8 @@ class LoginScreen extends StatelessWidget {
                                         borderRadius:
                                             BorderRadius.circular(50)),
                                 child: Icon(
-                                  Icons.person,
-                                  size: 40,
+                                  Icons.backup,
+                                  size: 35,
                                   color: StyleUtil.primaryColor,
                                 ),
                               ),

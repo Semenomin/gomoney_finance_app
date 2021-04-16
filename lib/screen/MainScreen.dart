@@ -1,14 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/model/User.dart' as model;
 import 'package:gomoney_finance_app/page/AboutPage.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/page/ChartsPage.dart';
 import 'package:gomoney_finance_app/page/DebtsPage.dart';
 import 'package:gomoney_finance_app/page/HomePage.dart';
+import 'package:gomoney_finance_app/page/LoadingPage.dart';
+import 'package:gomoney_finance_app/page/ProfilePage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -28,6 +32,9 @@ class _MainScreenState extends State<MainScreen> {
         color: StyleUtil.primaryColor,
         child: SafeArea(
             child: Scaffold(
+          onDrawerChanged: (bo) {
+            setState(() {});
+          },
           drawerScrimColor: Colors.transparent,
           resizeToAvoidBottomInset: false,
           drawer: _buildDrawer(),
@@ -198,6 +205,7 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               ),
             ),
+            Divider(),
             ListTile(
               title: Row(
                 children: [
@@ -209,9 +217,8 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                   Flexible(
-                    flex: 6,
                     child: Text(
-                      'User Namewwwwwwwwwwwwwwwwww',
+                      GetIt.I<PreferencesService>().getName()!,
                       style: TextStyle(
                         color: StyleUtil.primaryColor,
                         fontSize: 17.w,
@@ -220,24 +227,36 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     ),
                   ),
-                  Expanded(child: Container(width: 5.r)),
+                  Expanded(child: Container()),
                   Flexible(
-                    flex: 4,
-                    child: Text(
-                      '2000000' + " RUB",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 15.r,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Prompt",
-                      ),
-                    ),
+                    child: FutureBuilder(
+                        future: GetIt.I<SqliteService>().getUser(),
+                        builder: (context, AsyncSnapshot<model.User> user) {
+                          if (user.hasData) {
+                            return Text(
+                              user.data!.amountOfMoney.toStringAsFixed(2),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: StyleUtil.primaryColor,
+                                fontSize: 15.r,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Prompt",
+                              ),
+                            );
+                          } else
+                            return LoadingPage(StyleUtil.primaryColor);
+                        }),
                   ),
                 ],
               ),
-              onTap: () async {},
+              onTap: () async {
+                setState(() {
+                  _page = ProfilePage();
+                });
+                Navigator.pop(context);
+              },
             ),
+            Divider(),
             ListTile(
               title: Row(
                 children: [

@@ -23,7 +23,7 @@ class Category {
     this.id = map["id"];
     this.name = map["name"];
     this.amountOfMoney = map["amountOfMoney"];
-    this.color = Color(map["color"]);
+    this.color = Color(int.parse(map["color"]));
     this.icon = LineIcons.values[map["icon"]];
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];

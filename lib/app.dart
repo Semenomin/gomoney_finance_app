@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
 import 'package:gomoney_finance_app/screen/MainScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
@@ -38,10 +39,11 @@ class MyApp extends StatelessWidget {
                     );
                   } else
                     return MaterialApp(
-                        color: Colors.white,
+                        color: StyleUtil.primaryColor,
                         home: Container(
-                            color: Colors.white,
-                            child: Center(child: CircularProgressIndicator())));
+                            color: StyleUtil.primaryColor,
+                            child: Center(
+                                child: LoadingPage(StyleUtil.secondaryColor))));
                 })));
   }
 }

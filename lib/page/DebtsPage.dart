@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/Enums.dart';
 import 'package:gomoney_finance_app/model/Debtor.dart';
 import 'package:gomoney_finance_app/model/FinTransaction.dart';
+import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
+import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:gomoney_finance_app/widget/DebtPage/DebtCard.dart';
 import 'package:gomoney_finance_app/widget/DebtPage/DebtHistoryListTile.dart';
 
@@ -121,14 +123,15 @@ class _DebtsPageState extends State<DebtsPage> {
                                       });
                                 } else
                                   return Center(
-                                      child: CircularProgressIndicator());
+                                      child: LoadingPage(
+                                          StyleUtil.secondaryColor));
                               })
                           : Container()),
                 ],
               ),
             );
           } else
-            return Center(child: CircularProgressIndicator());
+            return Center(child: LoadingPage(StyleUtil.secondaryColor));
         });
   }
 

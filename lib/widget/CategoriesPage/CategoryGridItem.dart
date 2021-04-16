@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gomoney_finance_app/page/CategoriesPage.dart';
+import 'package:gomoney_finance_app/model/Category.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
@@ -27,7 +27,7 @@ class CategoryGridItem extends StatelessWidget {
             Expanded(
               child: !isInit
                   ? Icon(
-                      LineIcons.sdCard,
+                      category.icon,
                       color: category.color,
                       size: 50.w,
                     )
