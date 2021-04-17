@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AreYouSure {
   AreYouSure(context, onTap) {
-    showMaterialModalBottomSheet(
-      expand: true,
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
         child: Column(
           children: [
-            AppUtils.emptyContainer(double.infinity, 70.h),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Container(
                   decoration: BoxDecoration(
                       color: StyleUtil.secondaryColor,

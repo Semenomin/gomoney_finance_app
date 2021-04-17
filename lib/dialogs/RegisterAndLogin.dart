@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RegisterAndLogin {
-  RegisterAndLogin(context, title, onTap) {
+  RegisterAndLogin(
+      context,
+      title,
+      void onTap(
+          TextEditingController emailController,
+          TextEditingController passwordController,
+          TextEditingController nameController)) {
     TextEditingController _emailController = TextEditingController();
     TextEditingController _passwordController = TextEditingController();
     TextEditingController _nameController = TextEditingController();
 
-    showMaterialModalBottomSheet(
-      expand: true,
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
         child: Column(
           children: [
-            AppUtils.emptyContainer(double.infinity, 70.h),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -48,8 +51,8 @@ class RegisterAndLogin {
                       Container(
                         padding: EdgeInsets.all(20),
                         child: InkWell(
-                          onTap: onTap(_emailController, _passwordController,
-                              _nameController),
+                          onTap: () => onTap(_emailController,
+                              _passwordController, _nameController),
                           child: Container(
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.primaryColor),
