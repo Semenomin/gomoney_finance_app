@@ -3,17 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RestorePassword {
   RestorePassword(context, title) {
     TextEditingController _emailController = TextEditingController();
-    showMaterialModalBottomSheet(
-      expand: true,
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
         child: Column(
           children: [
             AppUtils.emptyContainer(double.infinity, 70.h),
