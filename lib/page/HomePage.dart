@@ -190,7 +190,7 @@ class _HomePageState extends State<HomePage> {
       colors: [
         StyleUtil.secondaryColor.withOpacity(1),
       ],
-      barWidth: 8,
+      barWidth: 5,
       isStrokeCapRound: true,
       dotData: FlDotData(
         show: true,

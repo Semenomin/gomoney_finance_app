@@ -9,13 +9,11 @@ import 'package:gomoney_finance_app/dialogs/RestorePassword.dart';
 import 'package:gomoney_finance_app/service/FCMservice.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
-import 'package:gomoney_finance_app/util/GoogleHttpClient.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gomoney_finance_app/screen/MainScreen.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:googleapis/drive/v3.dart';
 import 'package:line_icons/line_icons.dart';
 
 import 'BackupScreen.dart';
@@ -26,17 +24,16 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
-      child: Container(
-        color: StyleUtil.primaryColor,
-        child: SafeArea(
-          child: Scaffold(
-            body: Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: StyleUtil.primaryColor,
-              child: Column(
-                children: [
+        onWillPop: () async => false,
+        child: Container(
+          color: StyleUtil.primaryColor,
+          child: SafeArea(
+            child: Scaffold(
+              body: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: StyleUtil.primaryColor,
+                child: Column(children: [
                   Row(
                     children: [
                       Container(
@@ -56,7 +53,6 @@ class LoginScreen extends StatelessWidget {
                                   String email = emailController.text;
                                   String name = nameController.text;
                                   String password = passwordController.text;
-
                                   UserCredential userCredential =
                                       await FirebaseAuth
                                           .instance
@@ -150,16 +146,22 @@ class LoginScreen extends StatelessWidget {
                     constraints: BoxConstraints(maxWidth: 380.r),
                     child: Column(
                       children: [
-                        AppUtils.textForm(
-                            "Email",
-                            _emailController,
-                            TextInputType.emailAddress,
-                            StyleUtil.secondaryColor),
-                        AppUtils.textForm(
-                            "Password",
-                            _passwordController,
-                            TextInputType.visiblePassword,
-                            StyleUtil.secondaryColor),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.r),
+                          child: AppUtils.textForm(
+                              "Email",
+                              _emailController,
+                              TextInputType.emailAddress,
+                              StyleUtil.secondaryColor),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.r),
+                          child: AppUtils.textForm(
+                              "Password",
+                              _passwordController,
+                              TextInputType.visiblePassword,
+                              StyleUtil.secondaryColor),
+                        ),
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           height: 60.r,
@@ -168,52 +170,54 @@ class LoginScreen extends StatelessWidget {
                               InkWell(
                                 onTap: () async {
                                   try {
-                                    GoogleSignIn _googleSignIn = GoogleSignIn();
-                                    await _googleSignIn.signIn();
-                                  } catch (e) {
-                                    print(e);
-                                  }
-                                },
-                                child: InkWell(
-                                  onTap: () async {
-                                    try {
-                                      final GoogleSignInAccount googleUser =
-                                          (await GoogleSignIn().signIn())!;
-                                      final GoogleSignInAuthentication
-                                          googleAuth =
-                                          await googleUser.authentication;
-                                      final OAuthCredential credential =
-                                          GoogleAuthProvider.credential(
-                                        accessToken: googleAuth.accessToken,
-                                        idToken: googleAuth.idToken,
-                                      );
-                                      UserCredential userCredential =
-                                          await FirebaseAuth.instance
-                                              .signInWithCredential(credential);
+                                    final GoogleSignInAccount googleUser =
+                                        (await GoogleSignIn().signIn())!;
+                                    final GoogleSignInAuthentication
+                                        googleAuth =
+                                        await googleUser.authentication;
+                                    final OAuthCredential credential =
+                                        GoogleAuthProvider.credential(
+                                      accessToken: googleAuth.accessToken,
+                                      idToken: googleAuth.idToken,
+                                    );
+                                    UserCredential userCredential =
+                                        await FirebaseAuth.instance
+                                            .signInWithCredential(credential);
+                                    GetIt.I<PreferencesService>()
+                                        .setToken(userCredential.user!.uid);
+                                    AddName(context, "ADD NAME",
+                                        (nameController) {
                                       GetIt.I<PreferencesService>()
-                                          .setToken(userCredential.user!.uid);
+                                          .setName(nameController.text);
+                                      GetIt.I<SqliteService>()
+                                          .addUser(model.User(
+                                        id: userCredential.user!.uid,
+                                        pushId: (GetIt.I<FcmService>().token)!,
+                                        amountOfMoney: 0.0,
+                                        name: nameController.text,
+                                      ));
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => MainScreen()),
                                       );
-                                    } catch (e) {
-                                      BotToast.showText(text: "Wrong Auth");
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 60.r,
-                                    height: 60.r,
-                                    decoration: StyleUtil.rowndedBoxWithShadow
-                                        .copyWith(
-                                            color: StyleUtil.secondaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(50.r)),
-                                    child: Icon(
-                                      LineIcons.googleLogo,
-                                      size: 40.r,
-                                      color: StyleUtil.primaryColor,
-                                    ),
+                                    });
+                                  } catch (e) {
+                                    BotToast.showText(text: "Wrong Auth");
+                                  }
+                                },
+                                child: Container(
+                                  width: 60.r,
+                                  height: 60.r,
+                                  decoration: StyleUtil.rowndedBoxWithShadow
+                                      .copyWith(
+                                          color: StyleUtil.secondaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(50.r)),
+                                  child: Icon(
+                                    LineIcons.googleLogo,
+                                    size: 40.r,
+                                    color: StyleUtil.primaryColor,
                                   ),
                                 ),
                               ),
@@ -232,11 +236,25 @@ class LoginScreen extends StatelessWidget {
                                                   password: password);
                                       GetIt.I<PreferencesService>()
                                           .setToken(userCredential.user!.uid);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MainScreen()),
-                                      );
+                                      AddName(context, "ADD NAME",
+                                          (nameController) {
+                                        GetIt.I<PreferencesService>()
+                                            .setName(nameController.text);
+                                        GetIt.I<SqliteService>()
+                                            .addUser(model.User(
+                                          id: userCredential.user!.uid,
+                                          pushId:
+                                              (GetIt.I<FcmService>().token)!,
+                                          amountOfMoney: 0.0,
+                                          name: nameController.text,
+                                        ));
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MainScreen()),
+                                        );
+                                      });
                                     } on FirebaseAuthException catch (e) {
                                       if (e.code == 'user-not-found') {
                                         BotToast.showText(
@@ -272,49 +290,11 @@ class LoginScreen extends StatelessWidget {
                               )),
                               InkWell(
                                 onTap: () async {
-                                  AddName(context, "ADD NAME",
-                                      (controller) async {
-                                    try {
-                                      final googleSignIn =
-                                          GoogleSignIn.standard(
-                                              scopes: [DriveApi.driveScope]);
-                                      final GoogleSignInAccount googleUser =
-                                          (await googleSignIn.signIn())!;
-                                      final GoogleSignInAuthentication
-                                          googleAuth =
-                                          await googleUser.authentication;
-                                      final OAuthCredential credential =
-                                          GoogleAuthProvider.credential(
-                                        accessToken: googleAuth.accessToken,
-                                        idToken: googleAuth.idToken,
-                                      );
-                                      UserCredential userCredential =
-                                          await FirebaseAuth.instance
-                                              .signInWithCredential(credential);
-                                      var client = GoogleHttpClient(
-                                          await googleUser.authHeaders);
-                                      var driveApi = DriveApi(client);
-                                      GetIt.I<PreferencesService>()
-                                          .setToken(userCredential.user!.uid);
-                                      GetIt.I<PreferencesService>()
-                                          .setName(controller.text);
-                                      GetIt.I<SqliteService>()
-                                          .addUser(model.User(
-                                        id: userCredential.user!.uid,
-                                        pushId: (GetIt.I<FcmService>().token)!,
-                                        amountOfMoney: 0.0,
-                                        name: controller.text,
-                                      ));
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MainScreen()),
-                                      );
-                                    } catch (e) {
-                                      BotToast.showText(text: "Wrong Auth");
-                                      Navigator.pop(context);
-                                    }
-                                  });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BackupScreen()),
+                                  );
                                 },
                                 child: Container(
                                   width: 60.r,
@@ -325,112 +305,23 @@ class LoginScreen extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(50.r)),
                                   child: Icon(
-                                    Icons.person,
-                                    size: 40.r,
+                                    Icons.backup,
+                                    size: 35.r,
                                     color: StyleUtil.primaryColor,
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                                child: InkWell(
-                              onTap: () async {
-                                AddName(context, "ADD NAME",
-                                    (controller) async {
-                                  try {
-                                    String email = _emailController.text;
-                                    String password = _passwordController.text;
-                                    UserCredential userCredential =
-                                        await FirebaseAuth.instance
-                                            .signInWithEmailAndPassword(
-                                                email: email,
-                                                password: password);
-                                    GetIt.I<PreferencesService>()
-                                        .setToken(userCredential.user!.uid);
-                                    GetIt.I<PreferencesService>()
-                                        .setName(controller.text);
-                                    GetIt.I<SqliteService>().addUser(model.User(
-                                      id: userCredential.user!.uid,
-                                      pushId: (GetIt.I<FcmService>().token)!,
-                                      amountOfMoney: 0.0,
-                                      name: controller.text,
-                                    ));
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MainScreen()),
-                                    );
-                                  } on FirebaseAuthException catch (e) {
-                                    if (e.code == 'user-not-found') {
-                                      BotToast.showText(
-                                          text:
-                                              "No user found for that email.");
-                                      Navigator.pop(context);
-                                    } else if (e.code == 'wrong-password') {
-                                      BotToast.showText(
-                                          text:
-                                              "Wrong password provided for that user.");
-                                      Navigator.pop(context);
-                                    } else {
-                                      BotToast.showText(text: "Wrong Auth");
-                                      Navigator.pop(context);
-                                    }
-                                  }
-                                });
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                child: Container(
-                                  decoration: StyleUtil.rowndedBoxWithShadow
-                                      .copyWith(
-                                          color: StyleUtil.secondaryColor),
-                                  child: Center(
-                                    child: Text("GO",
-                                        style: TextStyle(
-                                            fontSize: 35.w,
-                                            fontFamily: "Prompt",
-                                            fontWeight: FontWeight.bold,
-                                            color: StyleUtil.primaryColor)),
-                                  ),
-                                ),
-                              ),
-                            )),
-                            InkWell(
-                              onTap: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => BackupScreen()),
-                                );
-                              },
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                decoration: StyleUtil.rowndedBoxWithShadow
-                                    .copyWith(
-                                        color: StyleUtil.secondaryColor,
-                                        borderRadius:
-                                            BorderRadius.circular(50)),
-                                child: Icon(
-                                  Icons.backup,
-                                  size: 35,
-                                  color: StyleUtil.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   AppUtils.emptyContainer(double.infinity, 20.h)
-                ],
+                ]),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

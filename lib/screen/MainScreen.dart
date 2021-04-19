@@ -27,52 +27,68 @@ bool isMenuFixed(BuildContext context) {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  Widget _page = SettingsPage();
+  Widget _page = HomePage();
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
-      child: Container(
-        color: StyleUtil.primaryColor,
-        child: SafeArea(
-            child: Scaffold(
-          onDrawerChanged: (bo) {
-            setState(() {});
-          },
-          drawerScrimColor: Colors.transparent,
-          resizeToAvoidBottomInset: false,
-          drawer: _buildDrawer(),
-          body: Builder(
-            builder: (context) => Container(
-              color: StyleUtil.primaryColor,
-              child: Column(
-                children: [
-                  InkWell(
-                    onTap: () => Scaffold.of(context).openDrawer(),
-                    child: Container(
-                      height: 60.h,
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            height: double.infinity,
-                            width: 60.h,
-                            child: FittedBox(
-                              child: Icon(
-                                Icons.menu,
-                                color: StyleUtil.secondaryColor,
+        onWillPop: () async => false,
+        child: Row(
+          children: [
+            isMenuFixed(context)
+                ? Container(
+                    color: StyleUtil.primaryColor,
+                    child: SafeArea(bottom: false, child: _buildDrawer()))
+                : Container(),
+            Expanded(
+              child: Container(
+                  color: StyleUtil.primaryColor,
+                  child: SafeArea(
+                      bottom: false,
+                      child: Scaffold(
+                          onDrawerChanged: (bo) {
+                            setState(() {});
+                          },
+                          drawerScrimColor: Colors.transparent,
+                          resizeToAvoidBottomInset: false,
+                          drawer: isMenuFixed(context) ? null : _buildDrawer(),
+                          body: Builder(
+                            builder: (context) => Container(
+                              color: StyleUtil.primaryColor,
+                              child: Column(
+                                children: [
+                                  isMenuFixed(context)
+                                      ? Container()
+                                      : InkWell(
+                                          onTap: () =>
+                                              Scaffold.of(context).openDrawer(),
+                                          child: Container(
+                                            height: 60.h,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.all(10),
+                                                  height: double.infinity,
+                                                  width: 60.h,
+                                                  child: FittedBox(
+                                                    child: Icon(
+                                                      Icons.menu,
+                                                      color: StyleUtil
+                                                          .secondaryColor,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                  Expanded(child: _page)
+                                ],
                               ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )),
+                          )))),
             ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _buildDrawer() {
@@ -100,38 +116,36 @@ class _MainScreenState extends State<MainScreen> {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-            Divider(
-              height: 1,
-            ),
-            Expanded(
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                children: [
-                  ListTile(
-                    title: Text(
-                      'Home',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 25.w,
-                        fontFamily: "Prompt",
+              Divider(
+                height: 1,
+              ),
+              Expanded(
+                child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'Home',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          _page = HomePage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      setState(() {
-                        _page = HomePage();
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Categories',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 25.w,
-                        fontFamily: "Prompt",
-                      ),
+                    ListTile(
+                      title: Text('Categories',
+                          style: TextStyle(
+                            color: StyleUtil.primaryColor,
+                            fontSize: 25.r,
+                            fontFamily: "Prompt",
+                          )),
                       onTap: () {
                         setState(() {
                           _page = CategoriesPage();
@@ -206,79 +220,70 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 ),
               ),
-            ),
-            Divider(),
-            ListTile(
-              title: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Icon(
-                      Icons.person,
-                      color: StyleUtil.primaryColor,
-                    ),
-                  ),
-                  Flexible(
-                    child: Text(
-                      GetIt.I<PreferencesService>().getName()!,
-                      style: TextStyle(
+              Divider(),
+              ListTile(
+                title: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Icon(
+                        Icons.person,
                         color: StyleUtil.primaryColor,
-                        fontSize: 17.w,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Prompt",
                       ),
                     ),
-                  ),
-                  Expanded(child: Container()),
-                  Flexible(
-                    child: FutureBuilder(
-                        future: GetIt.I<SqliteService>().getUser(),
-                        builder: (context, AsyncSnapshot<model.User> user) {
-                          if (user.hasData) {
-                            return Text(
-                              user.data!.amountOfMoney.toStringAsFixed(2),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: StyleUtil.primaryColor,
-                                fontSize: 15.r,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Prompt",
-                              ),
-                            );
-                          } else
-                            return LoadingPage(StyleUtil.primaryColor);
-                        }),
-                  ),
-                ],
+                    Flexible(
+                      child: Text(
+                        GetIt.I<PreferencesService>().getName()!,
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 12.r,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Prompt",
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    Flexible(
+                      child: FutureBuilder(
+                          future: GetIt.I<SqliteService>().getUser(),
+                          builder: (context, AsyncSnapshot<model.User> user) {
+                            if (user.hasData) {
+                              return Text(
+                                user.data!.amountOfMoney.toStringAsFixed(2),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: StyleUtil.primaryColor,
+                                  fontSize: 10.r,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Prompt",
+                                ),
+                              );
+                            } else
+                              return LoadingPage(StyleUtil.primaryColor);
+                          }),
+                    ),
+                  ],
+                ),
+                onTap: () async {
+                  setState(() {
+                    _page = ProfilePage();
+                  });
+                  Navigator.pop(context);
+                },
               ),
-              onTap: () async {
-                setState(() {
-                  _page = ProfilePage();
-                });
-                Navigator.pop(context);
-              },
-            ),
-            Divider(),
-            ListTile(
-              title: Row(
-                children: [
-                  Icon(
-                    Icons.logout,
-                    color: StyleUtil.primaryColor,
-                  ),
-                  Text(
-                    'LogOut',
-                    style: TextStyle(
+              Divider(),
+              ListTile(
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.logout,
                       color: StyleUtil.primaryColor,
                     ),
-                    Text(
-                      'LogOut',
-                      style: TextStyle(
-                        color: StyleUtil.primaryColor,
-                        fontSize: 15.r,
-                        fontFamily: "Prompt",
-                      ),
-                    ),
+                    Text('LogOut',
+                        style: TextStyle(
+                          fontSize: 16.r,
+                          color: StyleUtil.primaryColor,
+                        )),
                   ],
                 ),
                 onTap: () async {

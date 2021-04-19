@@ -9,6 +9,11 @@ import 'package:line_icons/line_icons.dart';
 class ChooseIconScreen extends StatelessWidget {
   final Category category;
   ChooseIconScreen(this.category);
+
+  bool isMenuFixed(BuildContext context) {
+    return MediaQuery.of(context).size.width > 500;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,13 +30,13 @@ class ChooseIconScreen extends StatelessWidget {
                   InkWell(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      height: 60.h,
+                      height: 60.r,
                       child: Row(
                         children: [
                           Container(
                             padding: EdgeInsets.all(10),
                             height: double.infinity,
-                            width: 60.h,
+                            width: 60.r,
                             child: FittedBox(
                               child: Icon(
                                 Icons.arrow_back,
@@ -57,7 +62,7 @@ class ChooseIconScreen extends StatelessWidget {
                         sliver: SliverGrid.count(
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
-                            crossAxisCount: 4,
+                            crossAxisCount: isMenuFixed(context) ? 7 : 4,
                             children: List.generate(
                                 LineIcons.values.keys.length, (index) {
                               return InkWell(
@@ -78,7 +83,7 @@ class ChooseIconScreen extends StatelessWidget {
                                   child: Icon(
                                     LineIcons.values[
                                         LineIcons.values.keys.elementAt(index)],
-                                    size: 50.w,
+                                    size: 45.r,
                                     color: StyleUtil.primaryColor,
                                   ),
                                 ),

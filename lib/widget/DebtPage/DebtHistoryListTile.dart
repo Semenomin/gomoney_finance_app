@@ -26,7 +26,7 @@ class DebtHistoryListTile extends StatelessWidget {
                 Expanded(
                   child: Text(name,
                       style: TextStyle(
-                          fontSize: 24.w,
+                          fontSize: 24.r,
                           fontFamily: "Prompt",
                           fontWeight: FontWeight.bold,
                           color: StyleUtil.secondaryColor)),
@@ -43,13 +43,14 @@ class DebtHistoryListTile extends StatelessWidget {
             subtitle: Row(
               children: [
                 Text(date.toString().substring(0, 19),
-                    style: TextStyle(color: StyleUtil.secondaryColor)),
+                    style: TextStyle(
+                        fontSize: 12.r, color: StyleUtil.secondaryColor)),
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(amount.toString() + " " + currency,
                         style: TextStyle(
-                            fontSize: 15.w,
+                            fontSize: 15.r,
                             fontFamily: "Prompt",
                             fontWeight: FontWeight.bold,
                             color: StyleUtil.secondaryColor)),

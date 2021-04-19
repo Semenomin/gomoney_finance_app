@@ -19,7 +19,7 @@ class AddNameAndAmount {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(10.r),
               child: Container(
                   decoration: BoxDecoration(
                       color: StyleUtil.secondaryColor,
@@ -38,25 +38,28 @@ class AddNameAndAmount {
                       ),
                       AppUtils.textForm("Name", _nameController,
                           TextInputType.text, StyleUtil.primaryColor),
+                      AppUtils.emptyContainer(double.infinity, 20.r),
                       AppUtils.textForm("Amount", _amountController,
                           TextInputType.number, StyleUtil.primaryColor),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: InkWell(
-                          onTap: () {
-                            onTap(_nameController, _amountController);
-                            update();
-                          },
-                          child: Container(
-                            decoration: StyleUtil.rowndedBoxWithShadow
-                                .copyWith(color: StyleUtil.primaryColor),
-                            child: Center(
-                              child: Text("GO",
-                                  style: TextStyle(
-                                      fontSize: 40,
-                                      fontFamily: "Prompt",
-                                      fontWeight: FontWeight.bold,
-                                      color: StyleUtil.secondaryColor)),
+                      Padding(
+                        padding: EdgeInsets.all(20.r),
+                        child: Container(
+                          child: InkWell(
+                            onTap: () {
+                              onTap(_nameController, _amountController);
+                              update();
+                            },
+                            child: Container(
+                              decoration: StyleUtil.rowndedBoxWithShadow
+                                  .copyWith(color: StyleUtil.primaryColor),
+                              child: Center(
+                                child: Text("GO",
+                                    style: TextStyle(
+                                        fontSize: 40.r,
+                                        fontFamily: "Prompt",
+                                        fontWeight: FontWeight.bold,
+                                        color: StyleUtil.secondaryColor)),
+                              ),
                             ),
                           ),
                         ),

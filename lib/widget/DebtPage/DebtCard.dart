@@ -10,6 +10,7 @@ import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
 class DebtCard extends StatelessWidget {
@@ -31,44 +32,39 @@ class DebtCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isPlus) {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8.0),
         child: Container(
           decoration: StyleUtil.rowndedBoxWithShadow
               .copyWith(color: StyleUtil.secondaryColor),
-          height: double.infinity,
           child: Column(
             children: [
-              Row(
-                children: [
-                  Container(
-                      padding: EdgeInsets.all(15.w),
-                      child: Text(debtor!.name,
-                          style: TextStyle(
-                              fontSize: 20.r,
-                              fontFamily: "Prompt",
-                              fontWeight: FontWeight.bold,
-                              color: StyleUtil.primaryColor))),
-                  Expanded(child: Container()),
-                  Visibility(
-                    visible: !isInitial,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: RawMaterialButton(
-                        constraints: BoxConstraints(minWidth: 0, minHeight: 0),
-                        onPressed: () => AreYouSure(
-                            context, () => onDeleteDebtor(debtor, context)),
-                        elevation: 4.0,
-                        fillColor: StyleUtil.primaryColor,
-                        child: Icon(
-                          Icons.close,
-                          size: 35.r,
-                          color: StyleUtil.secondaryColor,
-                        ),
-                        shape: CircleBorder(),
-                      ),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 20.r),
+                child: Row(
+                  children: [
+                    Container(
+                        child: Text(debtor!.name,
+                            style: TextStyle(
+                                fontSize: 20.r,
+                                fontFamily: "Prompt",
+                                fontWeight: FontWeight.bold,
+                                color: StyleUtil.primaryColor))),
+                    Expanded(child: Container()),
+                    Visibility(
+                        visible: !isInitial,
+                        child: InkWell(
+                          onTap: () => AreYouSure(
+                              context, () => onDeleteDebtor(debtor, context)),
+                          child: Container(
+                            decoration: StyleUtil.rowndedBoxWithShadow
+                                .copyWith(color: StyleUtil.primaryColor),
+                            width: 30.r,
+                            height: 30.r,
+                            child: Icon(Icons.close),
+                          ),
+                        )),
+                  ],
+                ),
               ),
               Expanded(
                 child: Padding(

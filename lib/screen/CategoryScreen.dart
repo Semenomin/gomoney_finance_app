@@ -5,6 +5,7 @@ import 'package:gomoney_finance_app/model/Category.dart';
 import 'package:gomoney_finance_app/model/FinTransaction.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
+import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gomoney_finance_app/widget/DebtPage/DebtHistoryListTile.dart';
@@ -56,78 +57,58 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
+                  Expanded(child: Container()),
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ChooseIconScreen(widget.category)),
+                        ).then((value) => setState(() {
+                              if (value != null) {
+                                widget.category.icon = value;
+                              }
+                            }));
+                      },
+                      child: Container(
+                        height: 60.r,
+                        width: 60.r,
+                        child: Icon(widget.category.icon, size: 40.r),
+                      )),
+                  InkWell(
+                    onTap: () {
+                      print("dwdw");
+                      showDialog<void>(
+                          context: context,
+                          builder: (_) => Material(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  OColorPicker(
+                                    selectedColor: widget.category.color,
+                                    colors: primaryColorsPalette,
+                                    onColorChange: (color) {
+                                      GetIt.I<SqliteService>()
+                                          .changeCategoryColor(
+                                              widget.category, color);
+                                      setState(() {
+                                        widget.category.color = color;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              )));
+                    },
                     child: Container(
-                      decoration: StyleUtil.rowndedBoxWithShadow.copyWith(
-                          color: widget.category.color,
-                          borderRadius: BorderRadius.circular(100)),
-                      height: 60.h,
-                      width: 115.h,
-                      child: Row(
-                        children: [
-                          InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChooseIconScreen(widget.category)),
-                                ).then((value) => setState(() {
-                                      widget.category.icon = value;
-                                    }));
-                              },
-                              child: Container(
-                                width: 50.r,
-                                height: 60.r,
-                                child: Icon(widget.category.icon, size: 35.r),
-                              )),
-                          VerticalDivider(
-                            color: Colors.black,
-                          ),
-                          InkWell(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => Material(
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          OColorPicker(
-                                            selectedColor:
-                                                widget.category.color,
-                                            colors: primaryColorsPalette,
-                                            onColorChange: (color) {
-                                              GetIt.I<SqliteService>()
-                                                  .changeCategoryColor(
-                                                      widget.category, color);
-                                              setState(() {
-                                                widget.category.color = color;
-                                              });
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  height: 60.h,
-                                )),
-                          )
-                        ],
-                      ),
+                      height: 60.r,
+                      width: 60.r,
+                      decoration: StyleUtil.rowndedBoxWithShadow
+                          .copyWith(color: widget.category.color),
                     ),
                   ),
+                  AppUtils.emptyContainer(10.r, 0)
                 ],
               ),
               Expanded(
@@ -169,71 +150,38 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
               Container(
                 height: 70.r,
-                color: StyleUtil.secondaryColor,
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                        AddNameAndAmount(context, "ADD INCOME", update,
-                            (nameController, amountController) {
-                          GetIt.I<SqliteService>().addTransaction(
-                              FinTransaction(
-                                  isIncome: true,
-                                  amountOfMoney:
-                                      double.parse(amountController.text),
-                                  name: nameController.text,
-                                  date: DateTime.now(),
-                                  id: Uuid().v4()),
-                              category: widget.category);
-                          Navigator.pop(context);
-                        });
-                      },
-                      child: Container(
-                        child: Center(
-                          child: Text("INCOME",
-                              style: TextStyle(
-                                  fontSize: 20.w,
-                                  fontFamily: "Prompt",
-                                  fontWeight: FontWeight.bold,
-                                  color: StyleUtil.primaryColor)),
-                        ),
+                child: InkWell(
+                  onTap: () {
+                    AddNameAndAmount(context, "ADD EXPENSE", update,
+                        (nameController, amountController) {
+                      GetIt.I<SqliteService>().addTransaction(
+                          FinTransaction(
+                              isIncome: false,
+                              amountOfMoney:
+                                  double.parse(amountController.text),
+                              name: nameController.text,
+                              date: DateTime.now(),
+                              id: Uuid().v4()),
+                          category: widget.category);
+                      Navigator.pop(context);
+                    });
+                    setState(() {});
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(5.r),
+                    child: Container(
+                      decoration: StyleUtil.rowndedBoxWithShadow
+                          .copyWith(color: StyleUtil.secondaryColor),
+                      child: Center(
+                        child: Text("EXPENSE",
+                            style: TextStyle(
+                                fontSize: 25.r,
+                                fontFamily: "Prompt",
+                                fontWeight: FontWeight.bold,
+                                color: StyleUtil.primaryColor)),
                       ),
-                    )),
-                    VerticalDivider(
-                      thickness: 3,
-                      color: StyleUtil.primaryColor,
                     ),
-                    Expanded(
-                        child: InkWell(
-                      onTap: () {
-                        AddNameAndAmount(context, "ADD EXPENSE", update,
-                            (nameController, amountController) {
-                          GetIt.I<SqliteService>().addTransaction(
-                              FinTransaction(
-                                  isIncome: false,
-                                  amountOfMoney:
-                                      double.parse(amountController.text),
-                                  name: nameController.text,
-                                  date: DateTime.now(),
-                                  id: Uuid().v4()),
-                              category: widget.category);
-                          Navigator.pop(context);
-                        });
-                        setState(() {});
-                      },
-                      child: Container(
-                        child: Center(
-                          child: Text("EXPENSE",
-                              style: TextStyle(
-                                  fontSize: 20.w,
-                                  fontFamily: "Prompt",
-                                  fontWeight: FontWeight.bold,
-                                  color: StyleUtil.primaryColor)),
-                        ),
-                      ),
-                    )),
-                  ],
+                  ),
                 ),
               )
             ],

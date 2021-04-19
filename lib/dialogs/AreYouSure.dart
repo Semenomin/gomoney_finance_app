@@ -12,7 +12,7 @@ class AreYouSure {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(10.r),
               child: Container(
                   decoration: BoxDecoration(
                       color: StyleUtil.secondaryColor,
@@ -25,7 +25,7 @@ class AreYouSure {
                         child: Text("ARE YOU SURE?",
                             style: TextStyle(
                                 fontFamily: "Prompt",
-                                fontSize: 30.w,
+                                fontSize: 30.r,
                                 color: StyleUtil.primaryColor,
                                 fontWeight: FontWeight.bold)),
                       ),
@@ -33,7 +33,7 @@ class AreYouSure {
                         children: [
                           Expanded(
                             child: Container(
-                              padding: EdgeInsets.all(20),
+                              padding: EdgeInsets.all(10.r),
                               child: InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
@@ -44,7 +44,7 @@ class AreYouSure {
                                   child: Center(
                                     child: Text("CANCEL",
                                         style: TextStyle(
-                                            fontSize: 30.w,
+                                            fontSize: 25.r,
                                             fontFamily: "Prompt",
                                             fontWeight: FontWeight.bold,
                                             color: StyleUtil.secondaryColor)),
@@ -55,7 +55,7 @@ class AreYouSure {
                           ),
                           Expanded(
                             child: Container(
-                              padding: EdgeInsets.all(20),
+                              padding: EdgeInsets.all(10.r),
                               child: InkWell(
                                 onTap: onTap,
                                 child: Container(
@@ -64,7 +64,7 @@ class AreYouSure {
                                   child: Center(
                                     child: Text("GO",
                                         style: TextStyle(
-                                            fontSize: 30.w,
+                                            fontSize: 25.r,
                                             fontFamily: "Prompt",
                                             fontWeight: FontWeight.bold,
                                             color: StyleUtil.secondaryColor)),

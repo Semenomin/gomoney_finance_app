@@ -40,7 +40,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             Expanded(
                                 child: categorys.data!.length > 0
                                     ? Container(
-                                        padding: EdgeInsets.all(10),
+                                        padding: EdgeInsets.all(0.r),
                                         child: Padding(
                                           padding: const EdgeInsets.all(30.0),
                                           child: PieChart(
@@ -56,7 +56,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                       )
                                     : Container()),
                             Container(
-                              width: 125.w,
+                              width: 125.r,
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: ListView.builder(
                                   physics: BouncingScrollPhysics(),
@@ -145,8 +145,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
       if (item.amountOfMoney != 0.0) {
         res.add(PieChartSectionData(
             color: item.color,
-            value: item.amountOfMoney,
-            title: item.amountOfMoney.toString(),
+            value: -item.amountOfMoney,
+            title: (-item.amountOfMoney).toString(),
             radius: 50,
             titleStyle: TextStyle(
                 fontSize: 10.w,

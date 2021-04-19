@@ -10,9 +10,9 @@ class AppUtils {
   static Widget textForm(String hint, TextEditingController controller,
       TextInputType textType, Color color) {
     return Container(
+      height: 65.r,
       constraints: BoxConstraints(maxWidth: 390.r),
-      height: 100.r,
-      padding: EdgeInsets.all(15.r),
+      padding: EdgeInsets.symmetric(horizontal: 20.r),
       child: Theme(
         data: ThemeData(primaryColor: color, hintColor: color),
         child: TextFormField(

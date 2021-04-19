@@ -39,15 +39,24 @@ class RegisterAndLogin {
                                 color: StyleUtil.primaryColor,
                                 fontWeight: FontWeight.bold)),
                       ),
-                      AppUtils.textForm("Email", _emailController,
-                          TextInputType.emailAddress, StyleUtil.primaryColor),
-                      AppUtils.textForm(
-                          "Password",
-                          _passwordController,
-                          TextInputType.visiblePassword,
-                          StyleUtil.primaryColor),
-                      AppUtils.textForm("Name", _nameController,
-                          TextInputType.text, StyleUtil.primaryColor),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.r),
+                        child: AppUtils.textForm("Email", _emailController,
+                            TextInputType.emailAddress, StyleUtil.primaryColor),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.r),
+                        child: AppUtils.textForm(
+                            "Password",
+                            _passwordController,
+                            TextInputType.visiblePassword,
+                            StyleUtil.primaryColor),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.r),
+                        child: AppUtils.textForm("Name", _nameController,
+                            TextInputType.text, StyleUtil.primaryColor),
+                      ),
                       Container(
                         padding: EdgeInsets.all(20),
                         child: InkWell(
@@ -59,7 +68,7 @@ class RegisterAndLogin {
                             child: Center(
                               child: Text("GO",
                                   style: TextStyle(
-                                      fontSize: 40,
+                                      fontSize: 40.r,
                                       fontFamily: "Prompt",
                                       fontWeight: FontWeight.bold,
                                       color: StyleUtil.secondaryColor)),

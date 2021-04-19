@@ -62,8 +62,8 @@ class SqliteService {
             "Group_id" TEXT,
             amountOfMoney REAL NOT NULL,
             name TEXT NOT NULL,
-            icon INTEGER NOT NULL,
-            color TEXT NOT NULL,CONSTRAINT "Users-Category"
+            icon TEXT NOT NULL,
+            color INTEGER NOT NULL,CONSTRAINT "Users-Category"
             FOREIGN KEY ("Users_id")
             REFERENCES "Users"(id)
             ,CONSTRAINT "Group-Category"

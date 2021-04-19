@@ -13,39 +13,40 @@ class AddAmount {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(10.r),
               child: Container(
                   decoration: BoxDecoration(
                       color: StyleUtil.secondaryColor,
                       borderRadius: BorderRadius.circular(30)),
                   child: Column(
                     children: [
-                      AppUtils.emptyContainer(double.infinity, 20.h),
                       Container(
-                        padding: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(20.r),
                         child: Text(title,
                             style: TextStyle(
                                 fontFamily: "Prompt",
-                                fontSize: 30.w,
+                                fontSize: 35.r,
                                 color: StyleUtil.primaryColor,
                                 fontWeight: FontWeight.bold)),
                       ),
                       AppUtils.textForm("Amount", _amountController,
                           TextInputType.number, StyleUtil.primaryColor),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: InkWell(
-                          onTap: () => onTap(_amountController),
-                          child: Container(
-                            decoration: StyleUtil.rowndedBoxWithShadow
-                                .copyWith(color: StyleUtil.primaryColor),
-                            child: Center(
-                              child: Text("GO",
-                                  style: TextStyle(
-                                      fontSize: 40,
-                                      fontFamily: "Prompt",
-                                      fontWeight: FontWeight.bold,
-                                      color: StyleUtil.secondaryColor)),
+                      Padding(
+                        padding: EdgeInsets.all(20.r),
+                        child: Container(
+                          child: InkWell(
+                            onTap: () => onTap(_amountController),
+                            child: Container(
+                              decoration: StyleUtil.rowndedBoxWithShadow
+                                  .copyWith(color: StyleUtil.primaryColor),
+                              child: Center(
+                                child: Text("GO",
+                                    style: TextStyle(
+                                        fontSize: 40.r,
+                                        fontFamily: "Prompt",
+                                        fontWeight: FontWeight.bold,
+                                        color: StyleUtil.secondaryColor)),
+                              ),
                             ),
                           ),
                         ),

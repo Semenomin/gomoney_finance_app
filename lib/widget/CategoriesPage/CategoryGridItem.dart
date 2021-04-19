@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/model/Category.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:line_icons/line_icons.dart';
 
 class CategoryGridItem extends StatelessWidget {
   final Category category;
@@ -45,6 +44,7 @@ class CategoryGridItem extends StatelessWidget {
                   style: TextStyle(
                       color: StyleUtil.primaryColor,
                       fontFamily: "Prompt",
+                      fontSize: 12.r,
                       fontWeight: FontWeight.bold),
                 ),
               ),
