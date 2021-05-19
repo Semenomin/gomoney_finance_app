@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:gomoney_finance_app/util/StyleUtils.dart';
 
 class CircularProgressGO extends StatelessWidget {
   const CircularProgressGO({required this.controller, required this.color});

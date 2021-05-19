@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/Enums.dart';
-import 'package:gomoney_finance_app/model/Debtor.dart';
-import 'package:gomoney_finance_app/model/FinTransaction.dart';
+import 'package:gomoney_finance_app/model/index.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
@@ -21,14 +20,14 @@ class _DebtsPageState extends State<DebtsPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: GetIt.I<SqliteService>().getAllDebtors(),
-        builder: (context, AsyncSnapshot<List<Debtor>> debtors) {
-          if (debtors.hasData) {
+        future: GetIt.I<SqliteService>().getAllPartners(),
+        builder: (context, AsyncSnapshot<List<Partner>> partners) {
+          if (partners.hasData) {
             double allLendAmount = 0;
             double allBorrowAmount = 0;
-            for (Debtor debtor in debtors.data!) {
-              allLendAmount += debtor.lendAmount;
-              allBorrowAmount += debtor.borrowAmount;
+            for (Partner partner in partners.data!) {
+              allLendAmount += partner.lendAmount;
+              allBorrowAmount += partner.borrowAmount;
             }
             return Container(
               child: Column(
@@ -43,7 +42,7 @@ class _DebtsPageState extends State<DebtsPage> {
                     },
                     controller: _cardController,
                     scrollDirection: Axis.horizontal,
-                    itemCount: debtors.data!.length + 2,
+                    itemCount: partners.data!.length + 2,
                     itemBuilder: (context, index) {
                       switch (index) {
                         case 0:
@@ -58,7 +57,7 @@ class _DebtsPageState extends State<DebtsPage> {
                           return DebtCard(
                               currensy: "RUB",
                               isInitial: true,
-                              debtor: Debtor(
+                              partner: Partner(
                                 id: "dwdww",
                                 name: "ALL",
                                 lendAmount: allLendAmount,
@@ -69,7 +68,7 @@ class _DebtsPageState extends State<DebtsPage> {
                         default:
                           return DebtCard(
                               currensy: "RUB",
-                              debtor: debtors.data![index - 2],
+                              partner: partners.data![index - 2],
                               update: update,
                               selectedPage: _selectedCard);
                       }
@@ -81,9 +80,10 @@ class _DebtsPageState extends State<DebtsPage> {
                           ? FutureBuilder(
                               future: _selectedCard != 1
                                   ? GetIt.I<SqliteService>().getTransactions(
-                                      debtor: debtors.data![_selectedCard - 2])
+                                      partner:
+                                          partners.data![_selectedCard - 2])
                                   : GetIt.I<SqliteService>()
-                                      .getAllDebtorTransactions(),
+                                      .getAllPartnersTransactions(),
                               builder: (context,
                                   AsyncSnapshot<List<FinTransaction>>
                                       transactions) {

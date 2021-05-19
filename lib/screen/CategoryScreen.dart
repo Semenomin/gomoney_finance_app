@@ -29,7 +29,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       color: StyleUtil.primaryColor,
       child: SafeArea(
           child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Container(
           color: StyleUtil.primaryColor,
           child: Column(
@@ -191,7 +191,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  void update() {
+  void update(i) {
     setState(() {});
   }
 }

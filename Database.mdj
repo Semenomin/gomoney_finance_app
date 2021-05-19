@@ -362,7 +362,7 @@
 									"top": 109,
 									"width": 188.869140625,
 									"height": 13,
-									"text": "Debtors"
+									"text": "Partners"
 								},
 								{
 									"_type": "ERDColumnCompartmentView",
@@ -2217,7 +2217,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFLzntJC6EktCk="
 					},
-					"name": "Debtors",
+					"name": "Partners",
 					"ownedElements": [
 						{
 							"_type": "ERDRelationship",
@@ -2592,7 +2592,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF469szZLVwvFQ="
 							},
-							"name": "Debtor_id",
+							"name": "Partner_id",
 							"type": "TEXT",
 							"length": 0,
 							"foreignKey": true,

@@ -14,19 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "978848093454-bt2rf5uda40girdpmkbjaepih3pqu84a.apps.googleusercontent.com",
+          "client_id": "978848093454-l6toik57cpisrprm60bhb5ugurrfflch.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.semenomin.gooney_finance_app",
-            "certificate_hash": "d770a386229cae2551fe59882b8d44f0ca3d417a"
-          }
-        },
-        {
-          "client_id": "978848093454-pac9m79ptjt332a85r9ri0h5d7b6ebee.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.semenomin.gooney_finance_app",
-            "certificate_hash": "a5ef40be5d6dd7868ddff5253329925f13ae8b5c"
+            "certificate_hash": "49addda3ddad99e6165abd64976a79a47e32ae0e"
           }
         },
         {
@@ -47,10 +39,10 @@
               "client_type": 3
             },
             {
-              "client_id": "978848093454-n512g4k3vn0n61fhr3jrfk3hdivcbba8.apps.googleusercontent.com",
+              "client_id": "978848093454-j1vdpe7e88tvneel8unohevskgn59q6f.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.diplomFinanceManager"
+                "bundle_id": "com.semenomin.gooneyFinanceApp"
               }
             }
           ]

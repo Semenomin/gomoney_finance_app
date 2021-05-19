@@ -35,4 +35,17 @@ class PreferencesService {
   void deleteName() {
     _prefs?.remove("name");
   }
+
+  void setDateOfLastBackup(DateTime date) {
+    _prefs?.setString("dateOfLastBackup", date.toString());
+  }
+
+  DateTime? getDateOfLastBackup() {
+    return DateTime.tryParse(
+        _prefs?.getString("dateOfLastBackup") ?? "dsdsdsdsdsds");
+  }
+
+  void deleteDateOfLastBackup() {
+    _prefs?.remove("dateOfLastBackup");
+  }
 }

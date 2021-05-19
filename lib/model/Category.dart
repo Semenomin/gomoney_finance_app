@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 
 class Category {
@@ -19,11 +18,11 @@ class Category {
       this.userId,
       this.groupId});
 
-  Category.fromMap(Map<String, dynamic?> map) {
+  Category.fromMap(Map<String, dynamic> map) {
     this.id = map["id"];
     this.name = map["name"];
     this.amountOfMoney = map["amountOfMoney"];
-    this.color = Color(int.parse(map["color"]));
+    this.color = Color(map["color"]);
     this.icon = LineIcons.values[map["icon"]];
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];

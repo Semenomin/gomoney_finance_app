@@ -1,16 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:gomoney_finance_app/model/User.dart' as model;
+import 'package:gomoney_finance_app/model/index.dart' as model;
 import 'package:gomoney_finance_app/page/AboutPage.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
 import 'package:gomoney_finance_app/page/ChartsPage.dart';
 import 'package:gomoney_finance_app/page/DebtsPage.dart';
 import 'package:gomoney_finance_app/page/HomePage.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
+import 'package:gomoney_finance_app/page/MoneyBoxPage.dart';
+import 'package:gomoney_finance_app/page/PlannedPage.dart';
 import 'package:gomoney_finance_app/page/ProfilePage.dart';
+import 'package:gomoney_finance_app/page/ScannerPage.dart';
 import 'package:gomoney_finance_app/page/SettingsPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
+import 'package:gomoney_finance_app/service/IsolateService.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
@@ -28,6 +32,13 @@ bool isMenuFixed(BuildContext context) {
 
 class _MainScreenState extends State<MainScreen> {
   Widget _page = HomePage();
+
+  @override
+  void initState() {
+    super.initState();
+    GetIt.I<IsolateService>().followBackup();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -140,6 +151,20 @@ class _MainScreenState extends State<MainScreen> {
                       },
                     ),
                     ListTile(
+                      title: Text('Boxes',
+                          style: TextStyle(
+                            color: StyleUtil.primaryColor,
+                            fontSize: 25.r,
+                            fontFamily: "Prompt",
+                          )),
+                      onTap: () {
+                        setState(() {
+                          _page = MoneyBoxPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
                       title: Text('Categories',
                           style: TextStyle(
                             color: StyleUtil.primaryColor,
@@ -171,7 +196,23 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     ListTile(
                       title: Text(
-                        'Debts',
+                        'Planned',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _page = PlannedPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Partners',
                         style: TextStyle(
                           color: StyleUtil.primaryColor,
                           fontSize: 25.r,
@@ -181,6 +222,22 @@ class _MainScreenState extends State<MainScreen> {
                       onTap: () {
                         setState(() {
                           _page = DebtsPage();
+                        });
+                        if (!isMenuFixed(context)) Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Scanner',
+                        style: TextStyle(
+                          color: StyleUtil.primaryColor,
+                          fontSize: 25.r,
+                          fontFamily: "Prompt",
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _page = ScannerPage();
                         });
                         if (!isMenuFixed(context)) Navigator.pop(context);
                       },
@@ -287,13 +344,16 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 ),
                 onTap: () async {
-                  await FirebaseAuth.instance.signOut();
-                  await GoogleSignIn().signOut();
-                  GetIt.I<PreferencesService>().deleteToken();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
+                  GetIt.I<PreferencesService>().deleteToken();
+                  GetIt.I<PreferencesService>().deleteDateOfLastBackup();
+                  GetIt.I<IsolateService>().isol!.kill();
+                  await GetIt.I<SqliteService>().clearAllTables();
+                  await FirebaseAuth.instance.signOut();
+                  await GoogleSignIn().disconnect();
                 },
               ),
             ],

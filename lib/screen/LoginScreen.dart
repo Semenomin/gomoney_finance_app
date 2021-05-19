@@ -6,6 +6,7 @@ import 'package:gomoney_finance_app/dialogs/AddName.dart';
 import 'package:gomoney_finance_app/dialogs/RegisterAndLogin.dart';
 import 'package:gomoney_finance_app/model/index.dart' as model;
 import 'package:gomoney_finance_app/dialogs/RestorePassword.dart';
+import 'package:gomoney_finance_app/service/BackupService.dart';
 import 'package:gomoney_finance_app/service/FCMservice.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
@@ -14,6 +15,7 @@ import 'package:gomoney_finance_app/screen/MainScreen.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:googleapis/drive/v3.dart';
 import 'package:line_icons/line_icons.dart';
 
 import 'BackupScreen.dart';
@@ -170,8 +172,10 @@ class LoginScreen extends StatelessWidget {
                               InkWell(
                                 onTap: () async {
                                   try {
+                                    GoogleSignIn sign = GoogleSignIn.standard(
+                                        scopes: [DriveApi.driveScope]);
                                     final GoogleSignInAccount googleUser =
-                                        (await GoogleSignIn().signIn())!;
+                                        (await sign.signIn())!;
                                     final GoogleSignInAuthentication
                                         googleAuth =
                                         await googleUser.authentication;
@@ -180,6 +184,7 @@ class LoginScreen extends StatelessWidget {
                                       accessToken: googleAuth.accessToken,
                                       idToken: googleAuth.idToken,
                                     );
+                                    GetIt.I<BackupService>().sign = sign;
                                     UserCredential userCredential =
                                         await FirebaseAuth.instance
                                             .signInWithCredential(credential);

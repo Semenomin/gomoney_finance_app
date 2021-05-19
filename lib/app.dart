@@ -2,7 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/screenutil_init.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
         onTap: () => SystemChannels.textInput.invokeMethod('TextInput.hide'),
         child: ScreenUtilInit(
             designSize: Size(360, 690),
-            allowFontScaling: false,
             builder: () => FutureBuilder(
                 future: GetIt.I.allReady(),
                 builder: (context, snapshot) {

@@ -10,7 +10,7 @@ class User {
     this.amountOfMoney = 0.0,
   });
 
-  User.fromMap(Map<String, dynamic?> map) {
+  User.fromMap(Map<String, dynamic> map) {
     this.id = map["id"];
     this.name = map["name"];
     this.amountOfMoney = map["amountOfMoney"];

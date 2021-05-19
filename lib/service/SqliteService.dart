@@ -1,32 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/model/Category.dart';
-import 'package:gomoney_finance_app/model/Debtor.dart';
+import 'package:gomoney_finance_app/model/MoneyBox.dart';
+import 'package:gomoney_finance_app/model/Partner.dart';
 import 'package:gomoney_finance_app/model/FinTransaction.dart';
 import 'package:gomoney_finance_app/model/Group.dart';
+import 'package:gomoney_finance_app/model/Planned.dart';
+import 'package:gomoney_finance_app/model/Scan.dart';
 import 'package:gomoney_finance_app/model/User.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'PreferencesService.dart';
+import 'dart:convert' as convert;
+import 'package:encrypt/encrypt.dart' as encrypt;
+
+List<String> tables = [
+  "Users",
+  "Groups",
+  "UserGroups",
+  "Category",
+  "Partner",
+  "Planned",
+  "FinTransaction",
+  "MoneyBox",
+  "Scans"
+];
 
 class SqliteService {
   Database? _db;
   String? _databasesPath;
+  static const SECRET_KEY = "2020_PRIVATES_KEYS_ENCRYPTS_2020";
 
   void closeDb() {
     _db!.close();
   }
 
   Future<SqliteService> init() async {
-    _databasesPath =
-        await getApplicationDocumentsDirectory().then((value) => value.path);
+    _databasesPath = await getDatabasesPath() + "goMoney.db";
 
-    String path = join(_databasesPath! + "/database", "dbGoMoney");
-
-    _db = await openDatabase(path, version: 1,
+    _db = await openDatabase(_databasesPath!, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute("""CREATE TABLE 'Users' (
             id TEXT NOT NULL,
@@ -63,7 +75,8 @@ class SqliteService {
             amountOfMoney REAL NOT NULL,
             name TEXT NOT NULL,
             icon TEXT NOT NULL,
-            color INTEGER NOT NULL,CONSTRAINT "Users-Category"
+            color INTEGER NOT NULL,
+            CONSTRAINT "Users-Category"
             FOREIGN KEY ("Users_id")
             REFERENCES "Users"(id)
             ,CONSTRAINT "Group-Category"
@@ -72,16 +85,49 @@ class SqliteService {
             PRIMARY KEY(id));
       """);
 
-      await db.execute("""CREATE TABLE "Debtor" (
+      await db.execute("""CREATE TABLE "Partner" (
             id TEXT NOT NULL,
             name TEXT,
             "lendAmount" REAL NOT NULL,
             "borrowAmount" REAL NOT NULL,
             "Users_id" TEXT,
-            "Group_id" TEXT,CONSTRAINT "Users-Debtor"
+            "Group_id" TEXT,CONSTRAINT "Users-Partner"
             FOREIGN KEY ("Users_id")
             REFERENCES "Users"(id)
-            ,CONSTRAINT "Group-Debtor"
+            ,CONSTRAINT "Group-Partner"
+            FOREIGN KEY ("Group_id")
+            REFERENCES "Group"(id),
+            PRIMARY KEY(id));
+      """);
+
+      await db.execute("""CREATE TABLE "Scans" (
+            id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            "date" TEXT NOT NULL,
+            "transactionNum" REAL,
+            "description" TEXT,
+            "Users_id" TEXT,
+            "Group_id" TEXT,CONSTRAINT "Users-Partner"
+            FOREIGN KEY ("Users_id")
+            REFERENCES "Users"(id)
+            ,CONSTRAINT "Group-Partner"
+            FOREIGN KEY ("Group_id")
+            REFERENCES "Group"(id),
+            PRIMARY KEY(id));
+      """);
+
+      await db.execute("""CREATE TABLE "Planned" (
+            id TEXT NOT NULL,
+            name TEXT,
+            amountOfMoney REAL NOT NULL,
+            dateFrom TEXT NOT NULL,
+            dateTo TEXT NOT NULL,
+            isIncome TEXT NOT NULL,
+            "Users_id" TEXT,
+            "Group_id" TEXT,CONSTRAINT "Users-Planned"
+            FOREIGN KEY ("Users_id")
+            REFERENCES "Users"(id)
+            ,CONSTRAINT "Group-Planned"
             FOREIGN KEY ("Group_id")
             REFERENCES "Group"(id),
             PRIMARY KEY(id));
@@ -93,14 +139,14 @@ class SqliteService {
             isIncome TEXT NOT NULL,
             date TEXT NOT NULL,
             "amountOfMoney" REAL NOT NULL,
-            "Debtor_id" TEXT,
+            "Partner_id" TEXT,
             "MoneyBox_id" TEXT,
             "Category_id" TEXT,CONSTRAINT "MoneyBox-Transaction"
             FOREIGN KEY ("MoneyBox_id")
             REFERENCES "MoneyBox"(id)
-            ,CONSTRAINT "Debtor-Transaction"
-            FOREIGN KEY ("Debtor_id")
-            REFERENCES "Debtor"(id)
+            ,CONSTRAINT "Partner-Transaction"
+            FOREIGN KEY ("Partner_id")
+            REFERENCES "Partner"(id)
             ,CONSTRAINT "Category-Transaction"
             FOREIGN KEY ("Category_id")
             REFERENCES "Category"(id),
@@ -110,6 +156,7 @@ class SqliteService {
             id TEXT NOT NULL,
             name TEXT NOT NULL,
             "amountOfMoney" REAL NOT NULL,
+            "aim" REAL NOT NULL,
             "Users_id" TEXT,
             "Group_id" TEXT,CONSTRAINT "Users-MoneyBox"
             FOREIGN KEY ("Users_id")
@@ -123,15 +170,30 @@ class SqliteService {
     return this;
   }
 
+  ///////////////////////////////////////////////////////////////////////////////
+  //?                              PLANNED                                   ?//
+  //////////////////////////////////////////////////////////////////////////////
+
+  void addPlanned(Planned planned) async {
+    await _db!.rawInsert(
+        'INSERT INTO Planned(id, Users_id, Group_id, amountOfMoney, name, isIncome, dateTo, dateFrom) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null , ${planned.amountOfMoney} , "${planned.name}", "${planned.isIncome}", "${planned.dateTo}", "${planned.dateFrom}")');
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //?                              CATEGORY                                  ?//
+  //////////////////////////////////////////////////////////////////////////////
+
+  void addCategory(String name) async {
+    await _db!.transaction((txn) async {
+      await txn.rawInsert(
+          'INSERT INTO Category(id, Users_id, Group_id,amountOfMoney, name, icon, color) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null, 0.0, "$name", "ban", ${Colors.white.value})');
+    });
+  }
+
   Future<List<Category>> getUserCategorys() async {
     var res = await _db!.rawQuery(
         'Select * from Category where Users_id = "${GetIt.I<PreferencesService>().getToken()}"');
     return List.generate(res.length, (index) => Category.fromMap(res[index]));
-  }
-
-  void changeCategoryColor(Category category, Color color) async {
-    await _db!.rawUpdate(
-        "UPDATE Category set color = '${color.value}' where id = '${category.id}'");
   }
 
   void changeCategoryIcon(Category category, String icon) async {
@@ -139,44 +201,86 @@ class SqliteService {
         "UPDATE Category set icon = '$icon' where id = '${category.id}'");
   }
 
-  void addCategory(String name) async {
+  void changeCategoryColor(Category category, Color color) async {
+    await _db!.rawUpdate(
+        "UPDATE Category set color = '${color.value}' where id = '${category.id}'");
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //?                              MONEYBOX                                  ?//
+  //////////////////////////////////////////////////////////////////////////////
+
+  Future<List<MoneyBox>> getUserMoneyBoxes() async {
+    var res = await _db!.rawQuery(
+        'Select * from MoneyBox where Users_id = "${GetIt.I<PreferencesService>().getToken()}"');
+    return List.generate(res.length, (index) => MoneyBox.fromMap(res[index]));
+  }
+
+  Future<List<MoneyBox>> getAllMoneyBoxes() async {
+    var res = await _db!.rawQuery('Select * from MoneyBox');
+    return List.generate(res.length, (index) => MoneyBox.fromMap(res[index]));
+  }
+
+  void addMoneyBox(String name, double aim) async {
     await _db!.transaction((txn) async {
       await txn.rawInsert(
-          'INSERT INTO Category(id, Users_id, Group_id,amountOfMoney, name, icon, color) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null, 0.0, "$name", "ban", "${Colors.white.value}")');
+          'INSERT INTO MoneyBox(id, Users_id, Group_id, amountOfMoney, name, aim) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null, 0.0, "$name", $aim)');
     });
   }
+
+  void deleteMoneyBox(MoneyBox moneyBox) async {
+    await _db!.rawInsert(
+        'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id) VALUES("${Uuid().v4()}", "Break Box ${moneyBox.name}", "true", "${DateTime.now()}", ${moneyBox.amountOfMoney}, null, "${moneyBox.id}", null)');
+    await _db!.rawUpdate(
+        "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${moneyBox.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+    await _db!.rawDelete("delete from MoneyBox where id = '${moneyBox.id}'");
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //?                                USER                                    ?//
+  //////////////////////////////////////////////////////////////////////////////
 
   void addUser(User user) async {
     await _db!.transaction((txn) async {
       await txn.rawInsert(
-          'INSERT INTO Users(id, name, amountOfMoney, pushId) VALUES("${user.id}", "${user.name}", ${user.amountOfMoney}, "${user.pushId}")');
+          'INSERT OR IGNORE INTO Users(id, name, amountOfMoney, pushId) VALUES("${user.id}", "${user.name}", ${user.amountOfMoney}, "${user.pushId}")');
     });
   }
 
-  void addDebtor(Debtor debtor) async {
-    if (debtor.groupId != null)
-      debtor.groupId = "\"" + debtor.groupId! + "\"";
+  Future<User> getUser() async {
+    var res = await _db!.rawQuery(
+        'Select * from Users where id = "${GetIt.I<PreferencesService>().getToken()}" ');
+    if (res.length == 0) {
+      return User(id: Uuid().v4(), pushId: "", name: "");
+    }
+    return User.fromMap(res.first);
+  }
+
+  void addPartner(Partner partner) async {
+    if (partner.groupId != null)
+      partner.groupId = "\"" + partner.groupId! + "\"";
     else
-      debtor.userId = "\"" + debtor.userId! + "\"";
+      partner.userId = "\"" + partner.userId! + "\"";
     await _db!.transaction((txn) async {
       await txn.rawInsert(
-          'INSERT INTO Debtor(id, name, lendAmount, borrowAmount, Users_id, Group_id) VALUES("${debtor.id}", "${debtor.name}", ${debtor.lendAmount}, ${debtor.borrowAmount}, ${debtor.userId}, ${debtor.groupId})');
+          'INSERT INTO Partner(id, name, lendAmount, borrowAmount, Users_id, Group_id) VALUES("${partner.id}", "${partner.name}", ${partner.lendAmount}, ${partner.borrowAmount}, ${partner.userId}, ${partner.groupId})');
     });
   }
 
   void addTransaction(FinTransaction transaction,
-      {Debtor? debtor, Category? category}) async {
-    String? debtorId;
+      {Partner? partner, Category? category, MoneyBox? moneyBox}) async {
+    String? partnerId;
     String? moneyBoxId;
     String? categoryId;
-    if (debtor != null) debtorId = "\"" + debtor.id + "\"";
+    if (partner != null) partnerId = "\"" + partner.id + "\"";
     if (category != null) categoryId = "\"" + category.id + "\"";
+    if (moneyBox != null) moneyBoxId = "\"" + moneyBox.id + "\"";
 
     await _db!.transaction((txn) async {
-      if (transaction.debtorId != null) {
+      if (transaction.partnerId != null) {
         if (!transaction.isIncome) {
-          double lendAmount = debtor!.lendAmount;
-          double borrowAmount = debtor.borrowAmount;
+          double lendAmount = partner!.lendAmount;
+          double borrowAmount = partner.borrowAmount;
           borrowAmount = borrowAmount - transaction.amountOfMoney;
           if (borrowAmount < 0) {
             lendAmount += -borrowAmount;
@@ -188,10 +292,10 @@ class SqliteService {
               "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
 
           await txn.rawUpdate(
-              "UPDATE Debtor set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $debtorId");
+              "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
         } else {
-          double lendAmount = debtor!.lendAmount;
-          double borrowAmount = debtor.borrowAmount;
+          double lendAmount = partner!.lendAmount;
+          double borrowAmount = partner.borrowAmount;
           lendAmount = lendAmount - transaction.amountOfMoney;
           if (lendAmount < 0) {
             borrowAmount += -lendAmount;
@@ -203,7 +307,7 @@ class SqliteService {
           await txn.rawUpdate(
               "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
           await txn.rawUpdate(
-              "UPDATE Debtor set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $debtorId");
+              "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
         }
       } else if (categoryId != null) {
         if (transaction.isIncome) {
@@ -219,22 +323,32 @@ class SqliteService {
           await txn.rawUpdate(
               "UPDATE Category set amountOfMoney = (select amountOfMoney from Category where id = $categoryId) - ${transaction.amountOfMoney} where id = $categoryId");
         }
+      } else if (moneyBoxId != null) {
+        await txn.rawUpdate(
+            "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+        await txn.rawUpdate(
+            "UPDATE MoneyBox set amountOfMoney = (select amountOfMoney from MoneyBox where id = '${moneyBox!.id}') + ${transaction.amountOfMoney} where id = '${moneyBox.id}'");
       }
       await txn.rawInsert(
-          'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Debtor_id, MoneyBox_id, Category_id) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $debtorId, $moneyBoxId, $categoryId)');
+          'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $partnerId, $moneyBoxId, $categoryId)');
     });
   }
 
   Future<List<FinTransaction>> getTransactions(
-      {Debtor? debtor, Category? category}) async {
-    if (debtor != null) {
+      {Partner? partner, Category? category, MoneyBox? moneyBox}) async {
+    if (partner != null) {
       var res = await _db!.rawQuery(
-          'select FinTransaction.id, Debtor.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.debtor_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Debtor on Debtor.id = FinTransaction.Debtor_id where Debtor.id = "${debtor.id}"');
+          'select FinTransaction.id, Partner.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Partner on Partner.id = FinTransaction.Partner_id where Partner.id = "${partner.id}"');
       return List.generate(
           res.length, (index) => FinTransaction.fromMap(res[index]));
     } else if (category != null) {
       var res = await _db!.rawQuery(
-          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.debtor_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Category on Category.id = FinTransaction.Category_id where Category.id = "${category.id}"');
+          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Category on Category.id = FinTransaction.Category_id where Category.id = "${category.id}"');
+      return List.generate(
+          res.length, (index) => FinTransaction.fromMap(res[index]));
+    } else if (moneyBox != null) {
+      var res = await _db!.rawQuery(
+          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN MoneyBox on MoneyBox.id = FinTransaction.MoneyBox_id where MoneyBox.id = "${moneyBox.id}"');
       return List.generate(
           res.length, (index) => FinTransaction.fromMap(res[index]));
     } else
@@ -248,27 +362,21 @@ class SqliteService {
         res.length, (index) => FinTransaction.fromMap(res[index]));
   }
 
-  Future<List<FinTransaction>> getAllDebtorTransactions() async {
+  Future<List<FinTransaction>> getAllPartnersTransactions() async {
     var res = await _db!.rawQuery(
-        'select FinTransaction.id, Debtor.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.debtor_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Debtor on Debtor.id = FinTransaction.Debtor_id');
+        'select FinTransaction.id, Partner.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Partner on Partner.id = FinTransaction.Partner_id');
     return List.generate(
         res.length, (index) => FinTransaction.fromMap(res[index]));
   }
 
-  Future<List<Debtor>> getAllDebtors() async {
+  Future<List<Partner>> getAllPartners() async {
     var res = await _db!.rawQuery(
-        'Select Debtor.id, Debtor.name, Debtor.lendAmount, Debtor.borrowAmount, Users.name as Users_id, Groups.name As Group_id from Debtor left outer join Users on Users.id = Debtor.Users_id left outer join Groups on Groups.id = Debtor.group_id ');
-    return List.generate(res.length, (index) => Debtor.fromMap(res[index]));
+        'Select Partner.id, Partner.name, Partner.lendAmount, Partner.borrowAmount, Users.name as Users_id, Groups.name As Group_id from Partner left outer join Users on Users.id = Partner.Users_id left outer join Groups on Groups.id = Partner.group_id ');
+    return List.generate(res.length, (index) => Partner.fromMap(res[index]));
   }
 
-  void deleteDebtor(Debtor debtor) async {
-    await _db!.rawDelete("delete from Debtor where id = '${debtor.id}'");
-  }
-
-  Future<User> getUser() async {
-    var res = await _db!.rawQuery(
-        'Select * from Users where id = "${GetIt.I<PreferencesService>().getToken()}" ');
-    return User.fromMap(res.first);
+  void deletePartner(Partner partner) async {
+    await _db!.rawDelete("delete from Partner where id = '${partner.id}'");
   }
 
   Future<List<Group>> getGroups() async {
@@ -276,7 +384,83 @@ class SqliteService {
     return List.generate(res.length, (index) => Group.fromMap(res[index]));
   }
 
+  Future<List<Scan>> getScans() async {
+    var res = await _db!.rawQuery(
+        'Select * from Scans where Users_id = "${GetIt.I<PreferencesService>().getToken()}"');
+    return List.generate(res.length, (index) => Scan.fromMap(res[index]));
+  }
+
+  Future<Scan> getScanById(String id) async {
+    var res = await _db!.rawQuery('Select * from Scans where id = "$id"');
+    return Scan.fromMap(res[0]);
+  }
+
+  Future<void> addScan(Scan scan) async {
+    await _db!.transaction((txn) async {
+      await txn.rawInsert(
+          'INSERT INTO Scans(id, name, date, description, transactionNum, Users_id, Group_id) VALUES("${scan.id}", "${scan.name}", "${scan.date.toString()}" , "${scan.description.replaceAll("\"", "\'")}",${scan.transactionNum}, "${GetIt.I<PreferencesService>().getToken()}", ${scan.groupId})');
+    });
+  }
+
+  Future<void> updateDescription(String desc, String id) async {
+    await _db!.transaction((txn) async {
+      await txn
+          .rawUpdate('Update Scans set description = "$desc" where id = "$id"');
+    });
+  }
+
   void deleteDB() async {
     deleteDatabase(_databasesPath!);
+  }
+
+  Future clearAllTables() async {
+    try {
+      for (String table in tables) {
+        await _db!.delete(table);
+        print('------ DELETE $table');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<String> generateBackup({bool isEncrypted = true}) async {
+    print('GENERATE BACKUP');
+    var dbs = _db;
+    List data = [];
+    List<Map<String, dynamic>> listMaps = [];
+    for (var i = 0; i < tables.length; i++) {
+      listMaps = await dbs!.query(tables[i]);
+      data.add(listMaps);
+    }
+    List backups = [tables, data];
+    String json = convert.jsonEncode(backups);
+    if (isEncrypted) {
+      final key = encrypt.Key.fromUtf8(SECRET_KEY);
+      final iv = encrypt.IV.fromLength(16);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      final encrypted = encrypter.encrypt(json, iv: iv);
+      print("BACKUP GENERATED");
+      return encrypted.base64;
+    } else {
+      return json;
+    }
+  }
+
+  Future<void> restoreBackup(String backup, {bool isEncrypted = true}) async {
+    var dbs = _db;
+    Batch batch = dbs!.batch();
+    final key = encrypt.Key.fromUtf8(SECRET_KEY);
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    List json = convert
+        .jsonDecode(isEncrypted ? encrypter.decrypt64(backup, iv: iv) : backup);
+    for (var i = 0; i < json[0].length; i++) {
+      for (var k = 0; k < json[1][i].length; k++) {
+        batch.insert(json[0][i], json[1][i][k]);
+      }
+    }
+    await batch.commit(continueOnError: false, noResult: true);
+    print('RESTORE BACKUP');
   }
 }

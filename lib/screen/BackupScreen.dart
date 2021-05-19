@@ -46,8 +46,6 @@ class BackupScreen extends StatelessWidget {
                 ],
               ),
               Expanded(child: Container()),
-              Divider(),
-              Visibility(child: ListTile())
             ],
           ),
         ),

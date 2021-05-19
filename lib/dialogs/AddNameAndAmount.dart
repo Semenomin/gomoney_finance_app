@@ -47,7 +47,7 @@ class AddNameAndAmount {
                           child: InkWell(
                             onTap: () {
                               onTap(_nameController, _amountController);
-                              update();
+                              update(0);
                             },
                             child: Container(
                               decoration: StyleUtil.rowndedBoxWithShadow

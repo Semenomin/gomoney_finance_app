@@ -4,24 +4,23 @@ import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/dialogs/AddAmount.dart';
 import 'package:gomoney_finance_app/dialogs/AddName.dart';
 import 'package:gomoney_finance_app/dialogs/AreYouSure.dart';
-import 'package:gomoney_finance_app/model/Debtor.dart';
-import 'package:gomoney_finance_app/model/index.dart';
+import 'package:gomoney_finance_app/model/FinTransaction.dart';
+import 'package:gomoney_finance_app/model/Partner.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
 class DebtCard extends StatelessWidget {
   final bool isPlus;
   final bool isInitial;
-  final Debtor? debtor;
+  final Partner? partner;
   final String currensy;
   final Function? update;
   final int? selectedPage;
   const DebtCard(
-      {this.debtor,
+      {this.partner,
       required this.currensy,
       this.isInitial = false,
       this.isPlus = false,
@@ -43,7 +42,7 @@ class DebtCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                        child: Text(debtor!.name,
+                        child: Text(partner!.name,
                             style: TextStyle(
                                 fontSize: 20.r,
                                 fontFamily: "Prompt",
@@ -53,8 +52,8 @@ class DebtCard extends StatelessWidget {
                     Visibility(
                         visible: !isInitial,
                         child: InkWell(
-                          onTap: () => AreYouSure(
-                              context, () => onDeleteDebtor(debtor, context)),
+                          onTap: () => AreYouSure(context, "ARE YOU SURE?",
+                              () => onDeletePartner(partner, context)),
                           child: Container(
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.primaryColor),
@@ -78,13 +77,13 @@ class DebtCard extends StatelessWidget {
                                 GetIt.I<SqliteService>().addTransaction(
                                     FinTransaction(
                                         id: Uuid().v4(),
-                                        name: "Debt Lend " + debtor!.name,
+                                        name: "Debt Lend " + partner!.name,
                                         isIncome: false,
                                         date: DateTime.now(),
                                         amountOfMoney:
                                             double.parse(controller.text),
-                                        debtorId: debtor!.id),
-                                    debtor: debtor);
+                                        partnerId: partner!.id),
+                                    partner: partner);
                                 update!(selectedPage);
                                 Navigator.pop(context);
                               })
@@ -109,7 +108,7 @@ class DebtCard extends StatelessWidget {
                                   child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
-                                          debtor!.lendAmount
+                                          partner!.lendAmount
                                                   .toStringAsFixed(2) +
                                               " " +
                                               currensy,
@@ -132,13 +131,13 @@ class DebtCard extends StatelessWidget {
                                 GetIt.I<SqliteService>().addTransaction(
                                     FinTransaction(
                                         id: Uuid().v4(),
-                                        name: "Debt Borrow " + debtor!.name,
+                                        name: "Debt Borrow " + partner!.name,
                                         isIncome: true,
                                         date: DateTime.now(),
                                         amountOfMoney:
                                             double.parse(controller.text),
-                                        debtorId: debtor!.id),
-                                    debtor: debtor);
+                                        partnerId: partner!.id),
+                                    partner: partner);
                                 update!(selectedPage);
                                 Navigator.pop(context);
                               })
@@ -163,7 +162,7 @@ class DebtCard extends StatelessWidget {
                                   child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
-                                          debtor!.borrowAmount
+                                          partner!.borrowAmount
                                                   .toStringAsFixed(2) +
                                               " " +
                                               currensy,
@@ -188,8 +187,8 @@ class DebtCard extends StatelessWidget {
       );
     } else
       return InkWell(
-        onTap: () => AddName(context, "ADD DEBTOR", (controller) {
-          GetIt.I<SqliteService>().addDebtor(Debtor(
+        onTap: () => AddName(context, "ADD PARTNER", (controller) {
+          GetIt.I<SqliteService>().addPartner(Partner(
               id: Uuid().v4(),
               name: controller.text,
               lendAmount: 0.0,
@@ -215,8 +214,8 @@ class DebtCard extends StatelessWidget {
       );
   }
 
-  void onDeleteDebtor(debtor, context) {
-    GetIt.I<SqliteService>().deleteDebtor(debtor);
+  void onDeletePartner(partner, context) {
+    GetIt.I<SqliteService>().deletePartner(partner);
     update!(selectedPage! - 1);
     Navigator.pop(context);
   }
