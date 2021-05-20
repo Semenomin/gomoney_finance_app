@@ -44,6 +44,20 @@ class MyIsolates {
   static void backupIsolate(List<dynamic> message) async {
     GoogleSignInAccount? acc;
     PreferencesService service = await PreferencesService().init();
+    int duration;
+    switch (service.getBackupLoop()) {
+      case 0:
+        duration = 1;
+        break;
+      case 1:
+        duration = 7;
+        break;
+      case 2:
+        duration = 30;
+        break;
+      default:
+        duration = 30;
+    }
     Timer.periodic(Duration(seconds: 5), (timer) async {
       DateTime? date = service.getDateOfLastBackup();
       if (date != null) {
@@ -55,8 +69,8 @@ class MyIsolates {
         );
         acc = await _googleSignIn.signInSilently();
         if (acc != null) {
-          date = DateTime(date.year, date.month, date.day, date.hour,
-              date.minute + 1, date.second, date.millisecond, date.microsecond);
+          date = DateTime(date.year, date.month, date.day + duration, date.hour,
+              date.minute, date.second, date.millisecond, date.microsecond);
           if (date.microsecondsSinceEpoch <=
               DateTime.now().microsecondsSinceEpoch) {
             SqliteService ser = await SqliteService().init();
@@ -90,9 +104,11 @@ class MyIsolates {
   }
 
   static void plannedIsolate(List<dynamic> message) async {
-    SqliteService sqlite = SqliteService();
+    SqliteService sqlite = await SqliteService().init();
+    PreferencesService service = await PreferencesService().init();
     Timer.periodic(Duration(seconds: 10), (timer) async {
-      List<Planned> planned = await sqlite.getAllPlanned();
+      List<Planned> planned =
+          await sqlite.getAllPlanned(token: service.getToken());
       if (planned.length != 0) {
         for (Planned plan in planned) {
           if (plan.dateTo.difference(DateTime.now()).inDays <= 0) {

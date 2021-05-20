@@ -35,7 +35,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    GetIt.I<IsolateService>().followBackup();
   }
 
   @override

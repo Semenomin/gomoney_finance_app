@@ -149,12 +149,6 @@ class _AddPlannedScreenState extends State<AddPlannedScreen> {
                         double? amount =
                             double.tryParse(_amountController.text);
                         if (amount != null) {
-                          var a2 = dateFrom.microsecondsSinceEpoch;
-                          var a3 = DateTime(DateTime.now().year,
-                                  DateTime.now().month, DateTime.now().day)
-                              .microsecondsSinceEpoch;
-                          var a4 = dateFrom.subtract(Duration(
-                              days: dateTo!.difference(dateFrom).inDays));
                           if (dateFrom.microsecondsSinceEpoch >
                               DateTime(DateTime.now().year,
                                       DateTime.now().month, DateTime.now().day)

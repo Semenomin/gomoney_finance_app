@@ -9,9 +9,14 @@ class AddName {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => SingleChildScrollView(
+      builder: (context) => Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           children: [
+            Expanded(
+              child: Container(),
+            ),
             Padding(
               padding: EdgeInsets.all(10.r),
               child: Container(

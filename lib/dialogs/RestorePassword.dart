@@ -11,10 +11,12 @@ class RestorePassword {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => SingleChildScrollView(
+      builder: (context) => Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           children: [
-            AppUtils.emptyContainer(double.infinity, 70.h),
+            Expanded(child: Container()),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(

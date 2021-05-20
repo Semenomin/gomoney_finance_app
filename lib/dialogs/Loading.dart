@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/service/BackupService.dart';
-import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
@@ -10,15 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Loading {
   Loading(context, title) {
-    var token = GetIt.I<PreferencesService>().getToken();
     showMaterialModalBottomSheet(
       expand: true,
       enableDrag: false,
       context: context,
       builder: (context) => FutureBuilder(
-        future: token == null
-            ? GetIt.I<BackupService>().signInBackup(context)
-            : GetIt.I<BackupService>().connectBackup(context),
+        future: GetIt.I<BackupService>().connectBackup(context),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return SingleChildScrollView(

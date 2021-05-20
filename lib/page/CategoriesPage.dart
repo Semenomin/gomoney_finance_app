@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -104,10 +105,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                         isInit: true, onTap: () {
                                       AddName(context, "ADD CATEGORY",
                                           (controller) {
-                                        GetIt.I<SqliteService>()
-                                            .addCategory(controller.text);
-                                        update();
-                                        Navigator.pop(context);
+                                        if (controller.text != "") {
+                                          GetIt.I<SqliteService>()
+                                              .addCategory(controller.text);
+                                          update();
+                                          Navigator.pop(context);
+                                        } else {
+                                          BotToast.showText(
+                                              text: "Set name, please!");
+                                        }
                                       });
                                     });
                                   else

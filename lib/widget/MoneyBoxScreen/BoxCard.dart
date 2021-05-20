@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,6 +39,9 @@ class BoxCard extends StatelessWidget {
         },
         onTap: () {
           AddAmount(context, "ADD MONEY", (controller) {
+            if (controller.text.contains(",")) {
+              controller.text = controller.text.replaceAll(",", ".");
+            }
             GetIt.I<SqliteService>().addTransaction(
                 FinTransaction(
                     id: Uuid().v4(),
@@ -92,10 +96,18 @@ class BoxCard extends StatelessWidget {
       return InkWell(
         onTap: () => AddNameAndAmount(context, "ADD BOX", update,
             (controllerName, controllerAmount) {
-          GetIt.I<SqliteService>().addMoneyBox(
-              controllerName.text, double.parse(controllerAmount.text));
-          update!(selectedPage);
-          Navigator.pop(context);
+          if (controllerAmount.text.contains(",")) {
+            controllerAmount.text.replaceAll(",", ".");
+          }
+          var amount = double.tryParse(controllerAmount.text);
+          if (amount != null) {
+            GetIt.I<SqliteService>().addMoneyBox(
+                controllerName.text, double.parse(controllerAmount.text));
+            update!(selectedPage! + 1);
+            Navigator.pop(context);
+          } else {
+            BotToast.showText(text: "Wrong Amount");
+          }
         }),
         child: Padding(
           padding: const EdgeInsets.all(8.0),

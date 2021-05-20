@@ -25,58 +25,6 @@ class BackupService {
     return this;
   }
 
-  Future<void> signInBackup(context) async {
-    per.Permission.storage.request();
-    sign = GoogleSignIn(scopes: ['email', DriveApi.driveScope]);
-    final GoogleSignInAccount googleUser = (await sign!.signIn())!;
-    var client = GoogleHttpClient(await googleUser.authHeaders);
-    var driveApi = DriveApi(client);
-    var fileList = await driveApi.files.list();
-    List<File> files = fileList.files!;
-    for (var file in files) {
-      if (file.name == "backupGoMoney") {
-        Media dwfile = await driveApi.files
-            .get(file.id!, downloadOptions: DownloadOptions.fullMedia) as Media;
-        List<int> dataStore = [];
-        dwfile.stream.listen((data) {
-          print("DataReceived: ${data.length}");
-          dataStore.insertAll(dataStore.length, data);
-        }, onDone: () {
-          print("Task Done");
-          String result = utf8.decode(dataStore);
-          print(result);
-          GetIt.I<SqliteService>().clearAllTables().then((value) => {
-                GetIt.I<SqliteService>()
-                    .restoreBackup(result)
-                    .then((value) => signIn(context, googleUser))
-              });
-        }, onError: (error) {
-          print("Some Error");
-        });
-      }
-    }
-    Navigator.pop(context);
-  }
-
-  void signIn(context, googleUser) async {
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    GetIt.I<PreferencesService>().setToken(userCredential.user!.uid);
-    var user = await GetIt.I<SqliteService>().getUser();
-    GetIt.I<PreferencesService>().setName(user.name);
-    GetIt.I<PreferencesService>().setDateOfLastBackup(DateTime.now());
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => MainScreen()),
-    );
-  }
-
   Future connectBackup(context) async {
     bool isFileExists = false;
     per.Permission.storage.request();

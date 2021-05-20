@@ -18,9 +18,14 @@ class RegisterAndLogin {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => SingleChildScrollView(
+      builder: (context) => Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           children: [
+            Expanded(
+              child: Container(),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(

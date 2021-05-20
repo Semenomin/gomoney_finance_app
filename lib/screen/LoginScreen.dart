@@ -18,8 +18,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:googleapis/drive/v3.dart';
 import 'package:line_icons/line_icons.dart';
 
-import 'BackupScreen.dart';
-
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -118,7 +116,7 @@ class LoginScreen extends StatelessWidget {
                             decoration: StyleUtil.rowndedBoxWithShadow
                                 .copyWith(color: StyleUtil.secondaryColor),
                             child: Center(
-                              child: Text("Forget your password?",
+                              child: Text("Forgot your password?",
                                   style: TextStyle(
                                       fontSize: 14.r,
                                       fontFamily: "Prompt",
@@ -293,29 +291,6 @@ class LoginScreen extends StatelessWidget {
                                   ),
                                 ),
                               )),
-                              InkWell(
-                                onTap: () async {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => BackupScreen()),
-                                  );
-                                },
-                                child: Container(
-                                  width: 60.r,
-                                  height: 60.r,
-                                  decoration: StyleUtil.rowndedBoxWithShadow
-                                      .copyWith(
-                                          color: StyleUtil.secondaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(50.r)),
-                                  child: Icon(
-                                    Icons.backup,
-                                    size: 35.r,
-                                    color: StyleUtil.primaryColor,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         )

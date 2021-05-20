@@ -16,6 +16,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (GetIt.I<PreferencesService>().getToken() != null) {
+      GetIt.I<IsolateService>().followPlanned();
+      GetIt.I<IsolateService>().followBackup();
+    }
     return GestureDetector(
         onTap: () => SystemChannels.textInput.invokeMethod('TextInput.hide'),
         child: ScreenUtilInit(
@@ -24,7 +28,6 @@ class MyApp extends StatelessWidget {
                 future: GetIt.I.allReady(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    GetIt.I<IsolateService>().followPlanned();
                     return MaterialApp(
                       builder: (context, child) {
                         child = botToastBuilder(context, child);

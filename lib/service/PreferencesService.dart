@@ -48,4 +48,12 @@ class PreferencesService {
   void deleteDateOfLastBackup() {
     _prefs?.remove("dateOfLastBackup");
   }
+
+  void setBackupLoop(int type) {
+    _prefs?.setInt("backupLoop", type);
+  }
+
+  int? getBackupLoop() {
+    return _prefs?.getInt("backupLoop") ?? 2;
+  }
 }

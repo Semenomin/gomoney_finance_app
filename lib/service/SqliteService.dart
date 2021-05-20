@@ -68,6 +68,48 @@ class SqliteService {
             PRIMARY KEY(id));
       """);
 
+      await db.execute(""" CREATE TABLE "GroupMoneyBoxes" (
+            id INTEGER NOT NULL,
+            "Group_id" TEXT NOT NULL,
+            "MoneyBox_id" TEXT NOT NULL,
+            CONSTRAINT "MoneyBox-GroupMoneyBoxes"
+            FOREIGN KEY ("MoneyBox_id")
+            REFERENCES "MoneyBox"(id),
+            PRIMARY KEY(id));
+            CONSTRAINT "Group-GroupMoneyBoxes"
+            FOREIGN KEY ("Group_id")
+            REFERENCES "Group"(id),
+            PRIMARY KEY(id));
+      """);
+
+      await db.execute(""" CREATE TABLE "GroupPartners" (
+            id INTEGER NOT NULL,
+            "Group_id" TEXT NOT NULL,
+            "Partner_id" TEXT NOT NULL,
+            CONSTRAINT "Partner-GroupPartners"
+            FOREIGN KEY ("Partner_id")
+            REFERENCES "Partner"(id),
+            PRIMARY KEY(id));
+            CONSTRAINT "Group-GroupPartners"
+            FOREIGN KEY ("Group_id")
+            REFERENCES "Group"(id),
+            PRIMARY KEY(id));
+      """);
+
+      await db.execute(""" CREATE TABLE "GroupCategories" (
+            id INTEGER NOT NULL,
+            "Group_id" TEXT NOT NULL,
+            "Category_id" TEXT NOT NULL,
+            CONSTRAINT "Category-GroupCategories"
+            FOREIGN KEY ("Category_id")
+            REFERENCES "Category"(id),
+            PRIMARY KEY(id));
+            CONSTRAINT "Group-GroupCategories"
+            FOREIGN KEY ("Group_id")
+            REFERENCES "Group"(id),
+            PRIMARY KEY(id));
+      """);
+
       await db.execute("""CREATE TABLE "Category" (
             id TEXT NOT NULL,
             "Users_id" TEXT,
@@ -179,9 +221,9 @@ class SqliteService {
         'INSERT INTO Planned(id, Users_id, Group_id, amountOfMoney, name, isIncome, dateTo, dateFrom) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null , ${planned.amountOfMoney} , "${planned.name}", "${planned.isIncome}", "${planned.dateTo}", "${planned.dateFrom}")');
   }
 
-  Future<List<Planned>> getAllPlanned() async {
+  Future<List<Planned>> getAllPlanned({token}) async {
     var res = await _db!.rawQuery(
-        'Select * from Planned where Users_id = "${GetIt.I<PreferencesService>().getToken()}"');
+        'Select * from Planned where Users_id = "${token != null ? token : GetIt.I<PreferencesService>().getToken()}"');
     return List.generate(res.length, (index) => Planned.fromMap(res[index]));
   }
 
