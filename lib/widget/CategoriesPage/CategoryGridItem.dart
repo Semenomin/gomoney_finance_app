@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/dialogs/RenameOrDelete.dart';
 import 'package:gomoney_finance_app/model/Category.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -7,8 +10,9 @@ class CategoryGridItem extends StatelessWidget {
   final Category category;
   final bool isInit;
   final Function onTap;
+  final Function? update;
   const CategoryGridItem(this.category,
-      {this.isInit = false, required this.onTap});
+      {this.isInit = false, required this.onTap, this.update});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +24,20 @@ class CategoryGridItem extends StatelessWidget {
       child: InkWell(
         onTap: () {
           onTap();
+        },
+        onLongPress: () {
+          if (!isInit) {
+            RenameOrDelete(context, (controller) {
+              category.name = controller.text;
+              GetIt.I<SqliteService>().changeCategoryName(category);
+              update!();
+              Navigator.pop(context);
+            }, () {
+              GetIt.I<SqliteService>().deleteCategory(category);
+              update!();
+              Navigator.pop(context);
+            });
+          }
         },
         child: Column(
           children: [

@@ -53,65 +53,94 @@ class _BackupScreenState extends State<BackupScreen> {
                 ],
               ),
               Expanded(child: Container()),
-              Divider(),
-              ListTile(
-                title: Row(
+              Visibility(
+                visible:
+                    GetIt.I<PreferencesService>().getDateOfLastBackup() != null,
+                child: Column(
                   children: [
-                    Text("Daily"),
-                    Expanded(child: Container()),
-                    Icon(
-                      GetIt.I<PreferencesService>().getBackupLoop() != 0
-                          ? Icons.highlight_off_rounded
-                          : Icons.check_circle,
-                      color: StyleUtil.secondaryColor,
-                      size: 30.r,
-                    )
+                    Text("Update",
+                        style: TextStyle(
+                            fontSize: 20.r,
+                            fontFamily: "Prompt",
+                            fontWeight: FontWeight.bold,
+                            color: StyleUtil.secondaryColor)),
+                    Divider(),
+                    ListTile(
+                      title: Row(
+                        children: [
+                          Text("Daily",
+                              style: TextStyle(
+                                  fontSize: 30.r,
+                                  fontFamily: "Prompt",
+                                  fontWeight: FontWeight.bold,
+                                  color: StyleUtil.secondaryColor)),
+                          Expanded(child: Container()),
+                          Icon(
+                            GetIt.I<PreferencesService>().getBackupLoop() != 0
+                                ? Icons.highlight_off_rounded
+                                : Icons.check_circle,
+                            color: StyleUtil.secondaryColor,
+                            size: 30.r,
+                          )
+                        ],
+                      ),
+                      onTap: () {
+                        GetIt.I<PreferencesService>().setBackupLoop(0);
+                        setState(() {});
+                      },
+                    ),
+                    Divider(),
+                    ListTile(
+                      title: Row(
+                        children: [
+                          Text("Weekly",
+                              style: TextStyle(
+                                  fontSize: 30.r,
+                                  fontFamily: "Prompt",
+                                  fontWeight: FontWeight.bold,
+                                  color: StyleUtil.secondaryColor)),
+                          Expanded(child: Container()),
+                          Icon(
+                            GetIt.I<PreferencesService>().getBackupLoop() != 1
+                                ? Icons.highlight_off_rounded
+                                : Icons.check_circle,
+                            color: StyleUtil.secondaryColor,
+                            size: 30.r,
+                          )
+                        ],
+                      ),
+                      onTap: () {
+                        GetIt.I<PreferencesService>().setBackupLoop(1);
+                        setState(() {});
+                      },
+                    ),
+                    Divider(),
+                    ListTile(
+                      title: Row(
+                        children: [
+                          Text("Monthly",
+                              style: TextStyle(
+                                  fontSize: 30.r,
+                                  fontFamily: "Prompt",
+                                  fontWeight: FontWeight.bold,
+                                  color: StyleUtil.secondaryColor)),
+                          Expanded(child: Container()),
+                          Icon(
+                            GetIt.I<PreferencesService>().getBackupLoop() != 2
+                                ? Icons.highlight_off_rounded
+                                : Icons.check_circle,
+                            color: StyleUtil.secondaryColor,
+                            size: 30.r,
+                          )
+                        ],
+                      ),
+                      onTap: () {
+                        GetIt.I<PreferencesService>().setBackupLoop(2);
+                        setState(() {});
+                      },
+                    ),
                   ],
                 ),
-                onTap: () {
-                  GetIt.I<PreferencesService>().setBackupLoop(0);
-                  setState(() {});
-                },
-              ),
-              Divider(),
-              ListTile(
-                title: Row(
-                  children: [
-                    Text("Weekly"),
-                    Expanded(child: Container()),
-                    Icon(
-                      GetIt.I<PreferencesService>().getBackupLoop() != 1
-                          ? Icons.highlight_off_rounded
-                          : Icons.check_circle,
-                      color: StyleUtil.secondaryColor,
-                      size: 30.r,
-                    )
-                  ],
-                ),
-                onTap: () {
-                  GetIt.I<PreferencesService>().setBackupLoop(1);
-                  setState(() {});
-                },
-              ),
-              Divider(),
-              ListTile(
-                title: Row(
-                  children: [
-                    Text("Monthly"),
-                    Expanded(child: Container()),
-                    Icon(
-                      GetIt.I<PreferencesService>().getBackupLoop() != 2
-                          ? Icons.highlight_off_rounded
-                          : Icons.check_circle,
-                      color: StyleUtil.secondaryColor,
-                      size: 30.r,
-                    )
-                  ],
-                ),
-                onTap: () {
-                  GetIt.I<PreferencesService>().setBackupLoop(2);
-                  setState(() {});
-                },
               ),
             ],
           ),

@@ -118,7 +118,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                     });
                                   else
                                     return CategoryGridItem(
-                                        categorys.data![index], onTap: () {
+                                        categorys.data![index],
+                                        update: update, onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

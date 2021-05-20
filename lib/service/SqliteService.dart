@@ -259,6 +259,15 @@ class SqliteService {
         "UPDATE Category set color = '${color.value}' where id = '${category.id}'");
   }
 
+  void changeCategoryName(Category category) async {
+    await _db!.rawUpdate(
+        "UPDATE Category set name = '${category.name}' where id = '${category.id}'");
+  }
+
+  void deleteCategory(Category category) async {
+    await _db!.rawDelete("delete from Category where id = '${category.id}'");
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //?                              MONEYBOX                                  ?//
   //////////////////////////////////////////////////////////////////////////////
