@@ -58,16 +58,16 @@ class _DebtsPageState extends State<DebtsPage> {
                               currensy: "RUB",
                               isInitial: true,
                               partner: Partner(
-                                id: "dwdww",
-                                name: "ALL",
-                                lendAmount: allLendAmount,
-                                borrowAmount: allBorrowAmount,
-                              ),
+                                  id: "dwdww",
+                                  name: "ALL",
+                                  lendAmount: allLendAmount,
+                                  borrowAmount: allBorrowAmount,
+                                  currency: ""),
                               update: update,
                               selectedPage: _selectedCard);
                         default:
                           return DebtCard(
-                              currensy: "RUB",
+                              currensy: partners.data![index - 2].currency,
                               partner: partners.data![index - 2],
                               update: update,
                               selectedPage: _selectedCard);
@@ -119,7 +119,12 @@ class _DebtsPageState extends State<DebtsPage> {
                                                         index -
                                                         1]
                                                 .amountOfMoney,
-                                            currency: "RUB");
+                                            currency: transactions
+                                                .data![
+                                                    transactions.data!.length -
+                                                        index -
+                                                        1]
+                                                .currency);
                                       });
                                 } else
                                   return Center(

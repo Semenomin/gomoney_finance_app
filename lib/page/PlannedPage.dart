@@ -30,7 +30,7 @@ class _PlannedPageState extends State<PlannedPage> {
                   child: ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return PlannedCard(snapshot.data![index]);
+                      return PlannedCard(snapshot.data![index], update);
                     },
                   ),
                 )),

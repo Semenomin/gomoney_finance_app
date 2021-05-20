@@ -42,14 +42,14 @@ class _MoneyBoxPageState extends State<MoneyBoxPage> {
                       switch (index) {
                         case 0:
                           return BoxCard(
-                            currensy: "RUB",
+                            currensy: "",
                             isPlus: true,
                             update: update,
                             selectedPage: _selectedCard,
                           );
                         default:
                           return BoxCard(
-                              currensy: "RUB",
+                              currensy: "",
                               box: moneyBoxes.data!.elementAt(index - 1),
                               update: update,
                               selectedPage: _selectedCard);
@@ -98,7 +98,12 @@ class _MoneyBoxPageState extends State<MoneyBoxPage> {
                                                         index -
                                                         1]
                                                 .amountOfMoney,
-                                            currency: "RUB");
+                                            currency: transactions
+                                                .data![
+                                                    transactions.data!.length -
+                                                        index -
+                                                        1]
+                                                .currency);
                                       });
                                 } else
                                   return Center(

@@ -139,8 +139,9 @@ class AreYouSure {
                                       name: "Scan " + _nameController.text,
                                       isIncome: false,
                                       date: DateTime.now(),
-                                      amountOfMoney: double.parse(
-                                          _amountController.text)));
+                                      amountOfMoney:
+                                          double.parse(_amountController.text),
+                                      currency: ""));
                               Navigator.pop(context);
                             },
                             child: Container(

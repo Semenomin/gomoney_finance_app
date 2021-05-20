@@ -160,7 +160,8 @@ class _AddPlannedScreenState extends State<AddPlannedScreen> {
                                 dateFrom: dateFrom.subtract(Duration(
                                     days: dateTo!.difference(dateFrom).inDays)),
                                 dateTo: dateFrom,
-                                isIncome: widget.isIncome));
+                                isIncome: widget.isIncome,
+                                currency: ""));
                             Navigator.pop(context);
                           } else {
                             GetIt.I<SqliteService>().addPlanned(Planned(
@@ -169,14 +170,16 @@ class _AddPlannedScreenState extends State<AddPlannedScreen> {
                                 amountOfMoney: amount,
                                 dateFrom: dateFrom,
                                 dateTo: dateTo!,
-                                isIncome: widget.isIncome));
+                                isIncome: widget.isIncome,
+                                currency: ""));
                             GetIt.I<SqliteService>().addTransaction(
                                 FinTransaction(
                                     id: Uuid().v4(),
                                     name: "Planned " + _nameController.text,
                                     isIncome: widget.isIncome,
                                     date: DateTime.now(),
-                                    amountOfMoney: amount));
+                                    amountOfMoney: amount,
+                                    currency: ""));
                             Navigator.pop(context);
                           }
                         } else {

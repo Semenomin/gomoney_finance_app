@@ -132,6 +132,7 @@ class SqliteService {
             name TEXT,
             "lendAmount" REAL NOT NULL,
             "borrowAmount" REAL NOT NULL,
+            "currency" TEXT NOT NULL,
             "Users_id" TEXT,
             "Group_id" TEXT,CONSTRAINT "Users-Partner"
             FOREIGN KEY ("Users_id")
@@ -165,6 +166,7 @@ class SqliteService {
             dateFrom TEXT NOT NULL,
             dateTo TEXT NOT NULL,
             isIncome TEXT NOT NULL,
+            "currency" TEXT NOT NULL,
             "Users_id" TEXT,
             "Group_id" TEXT,CONSTRAINT "Users-Planned"
             FOREIGN KEY ("Users_id")
@@ -181,6 +183,7 @@ class SqliteService {
             isIncome TEXT NOT NULL,
             date TEXT NOT NULL,
             "amountOfMoney" REAL NOT NULL,
+            "currency" TEXT NOT NULL,
             "Partner_id" TEXT,
             "MoneyBox_id" TEXT,
             "Category_id" TEXT,CONSTRAINT "MoneyBox-Transaction"
@@ -199,6 +202,7 @@ class SqliteService {
             name TEXT NOT NULL,
             "amountOfMoney" REAL NOT NULL,
             "aim" REAL NOT NULL,
+            "currency" TEXT NOT NULL,
             "Users_id" TEXT,
             "Group_id" TEXT,CONSTRAINT "Users-MoneyBox"
             FOREIGN KEY ("Users_id")
@@ -218,7 +222,7 @@ class SqliteService {
 
   void addPlanned(Planned planned) async {
     await _db!.rawInsert(
-        'INSERT INTO Planned(id, Users_id, Group_id, amountOfMoney, name, isIncome, dateTo, dateFrom) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null , ${planned.amountOfMoney} , "${planned.name}", "${planned.isIncome}", "${planned.dateTo}", "${planned.dateFrom}")');
+        'INSERT INTO Planned(id, Users_id, Group_id, amountOfMoney, name, isIncome, dateTo, dateFrom, currency) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null , ${planned.amountOfMoney} , "${planned.name}", "${planned.isIncome}", "${planned.dateTo}", "${planned.dateFrom}", "${GetIt.I<PreferencesService>().getCurrency()}")');
   }
 
   Future<List<Planned>> getAllPlanned({token}) async {
@@ -232,6 +236,24 @@ class SqliteService {
         "UPDATE Planned set dateFrom = ${planned.dateFrom}, dateTo = ${planned.dateTo} where id = '${planned.id}'");
   }
 
+  Future<void> changePlannedName(Planned planned) async {
+    await _db!.rawUpdate(
+        "UPDATE Planned set name = '${planned.name}' where id = '${planned.id}'");
+  }
+
+  Future<void> changePlannedAmountOfMoney(Planned planned) async {
+    await _db!.rawUpdate(
+        "UPDATE Planned set amountOfMoney = ${planned.amountOfMoney} where id = '${planned.id}'");
+  }
+
+  Future<void> changePlannedIsIncome(Planned planned) async {
+    await _db!.rawUpdate(
+        "UPDATE Planned set isIncome = '${planned.isIncome}' where id = '${planned.id}'");
+  }
+
+  void deletePlanned(Planned planned) async {
+    await _db!.rawDelete("delete from Planned where id = '${planned.id}'");
+  }
   //////////////////////////////////////////////////////////////////////////////
   //?                              CATEGORY                                  ?//
   //////////////////////////////////////////////////////////////////////////////
@@ -286,13 +308,13 @@ class SqliteService {
   void addMoneyBox(String name, double aim) async {
     await _db!.transaction((txn) async {
       await txn.rawInsert(
-          'INSERT INTO MoneyBox(id, Users_id, Group_id, amountOfMoney, name, aim) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null, 0.0, "$name", $aim)');
+          'INSERT INTO MoneyBox(id, Users_id, Group_id, amountOfMoney, name, aim, currency) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null, 0.0, "$name", $aim,"${GetIt.I<PreferencesService>().getCurrency()}")');
     });
   }
 
   void deleteMoneyBox(MoneyBox moneyBox) async {
     await _db!.rawInsert(
-        'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id) VALUES("${Uuid().v4()}", "Break Box ${moneyBox.name}", "true", "${DateTime.now()}", ${moneyBox.amountOfMoney}, null, "${moneyBox.id}", null)');
+        'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id, currency) VALUES("${Uuid().v4()}", "Break Box ${moneyBox.name}", "true", "${DateTime.now()}", ${moneyBox.amountOfMoney}, null, "${moneyBox.id}", null, "${moneyBox.currency}")');
     await _db!.rawUpdate(
         "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${moneyBox.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
     await _db!.rawDelete("delete from MoneyBox where id = '${moneyBox.id}'");
@@ -325,7 +347,7 @@ class SqliteService {
       partner.userId = "\"" + partner.userId! + "\"";
     await _db!.transaction((txn) async {
       await txn.rawInsert(
-          'INSERT INTO Partner(id, name, lendAmount, borrowAmount, Users_id, Group_id) VALUES("${partner.id}", "${partner.name}", ${partner.lendAmount}, ${partner.borrowAmount}, ${partner.userId}, ${partner.groupId})');
+          'INSERT INTO Partner(id, name, lendAmount, borrowAmount, Users_id, Group_id, currency) VALUES("${partner.id}", "${partner.name}", ${partner.lendAmount}, ${partner.borrowAmount}, ${partner.userId}, ${partner.groupId}, "${GetIt.I<PreferencesService>().getCurrency()}")');
     });
   }
 
@@ -334,14 +356,16 @@ class SqliteService {
     String? partnerId;
     String? moneyBoxId;
     String? categoryId;
+    String? currency;
     if (partner != null) partnerId = "\"" + partner.id + "\"";
     if (category != null) categoryId = "\"" + category.id + "\"";
     if (moneyBox != null) moneyBoxId = "\"" + moneyBox.id + "\"";
 
     await _db!.transaction((txn) async {
       if (transaction.partnerId != null) {
+        currency = partner!.currency;
         if (!transaction.isIncome) {
-          double lendAmount = partner!.lendAmount;
+          double lendAmount = partner.lendAmount;
           double borrowAmount = partner.borrowAmount;
           borrowAmount = borrowAmount - transaction.amountOfMoney;
           if (borrowAmount < 0) {
@@ -356,7 +380,7 @@ class SqliteService {
           await txn.rawUpdate(
               "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
         } else {
-          double lendAmount = partner!.lendAmount;
+          double lendAmount = partner.lendAmount;
           double borrowAmount = partner.borrowAmount;
           lendAmount = lendAmount - transaction.amountOfMoney;
           if (lendAmount < 0) {
@@ -386,10 +410,11 @@ class SqliteService {
               "UPDATE Category set amountOfMoney = (select amountOfMoney from Category where id = $categoryId) - ${transaction.amountOfMoney} where id = $categoryId");
         }
       } else if (moneyBoxId != null) {
+        currency = moneyBox!.currency;
         await txn.rawUpdate(
             "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
         await txn.rawUpdate(
-            "UPDATE MoneyBox set amountOfMoney = (select amountOfMoney from MoneyBox where id = '${moneyBox!.id}') + ${transaction.amountOfMoney} where id = '${moneyBox.id}'");
+            "UPDATE MoneyBox set amountOfMoney = (select amountOfMoney from MoneyBox where id = '${moneyBox.id}') + ${transaction.amountOfMoney} where id = '${moneyBox.id}'");
       } else {
         if (transaction.isIncome) {
           await txn.rawUpdate(
@@ -400,7 +425,7 @@ class SqliteService {
         }
       }
       await txn.rawInsert(
-          'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $partnerId, $moneyBoxId, $categoryId)');
+          'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id, currency) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $partnerId, $moneyBoxId, $categoryId, "${currency == null ? GetIt.I<PreferencesService>().getCurrency() : currency}")');
     });
   }
 
@@ -408,17 +433,17 @@ class SqliteService {
       {Partner? partner, Category? category, MoneyBox? moneyBox}) async {
     if (partner != null) {
       var res = await _db!.rawQuery(
-          'select FinTransaction.id, Partner.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Partner on Partner.id = FinTransaction.Partner_id where Partner.id = "${partner.id}"');
+          'select FinTransaction.id, Partner.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id, FinTransaction.currency from FinTransaction inner JOIN Partner on Partner.id = FinTransaction.Partner_id where Partner.id = "${partner.id}"');
       return List.generate(
           res.length, (index) => FinTransaction.fromMap(res[index]));
     } else if (category != null) {
       var res = await _db!.rawQuery(
-          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN Category on Category.id = FinTransaction.Category_id where Category.id = "${category.id}"');
+          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id, FinTransaction.currency from FinTransaction inner JOIN Category on Category.id = FinTransaction.Category_id where Category.id = "${category.id}"');
       return List.generate(
           res.length, (index) => FinTransaction.fromMap(res[index]));
     } else if (moneyBox != null) {
       var res = await _db!.rawQuery(
-          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id from FinTransaction inner JOIN MoneyBox on MoneyBox.id = FinTransaction.MoneyBox_id where MoneyBox.id = "${moneyBox.id}"');
+          'select FinTransaction.id, FinTransaction.name, FinTransaction.isIncome, FinTransaction.date, FinTransaction.amountOfMoney, FinTransaction.partner_id, FinTransaction.MoneyBox_id, FinTransaction.Category_id, FinTransaction.currency from FinTransaction inner JOIN MoneyBox on MoneyBox.id = FinTransaction.MoneyBox_id where MoneyBox.id = "${moneyBox.id}"');
       return List.generate(
           res.length, (index) => FinTransaction.fromMap(res[index]));
     } else
@@ -441,7 +466,7 @@ class SqliteService {
 
   Future<List<Partner>> getAllPartners() async {
     var res = await _db!.rawQuery(
-        'Select Partner.id, Partner.name, Partner.lendAmount, Partner.borrowAmount, Users.name as Users_id, Groups.name As Group_id from Partner left outer join Users on Users.id = Partner.Users_id left outer join Groups on Groups.id = Partner.group_id ');
+        'Select Partner.id, Partner.name, Partner.lendAmount, Partner.borrowAmount,Partner.currency, Users.name as Users_id, Groups.name As Group_id from Partner left outer join Users on Users.id = Partner.Users_id left outer join Groups on Groups.id = Partner.group_id ');
     return List.generate(res.length, (index) => Partner.fromMap(res[index]));
   }
 

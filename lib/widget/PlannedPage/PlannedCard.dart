@@ -1,13 +1,19 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/dialogs/AddAmount.dart';
+import 'package:gomoney_finance_app/dialogs/AreYouSure.dart';
+import 'package:gomoney_finance_app/dialogs/RenameOrDelete.dart';
 import 'package:gomoney_finance_app/model/Planned.dart';
+import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PlannedCard extends StatelessWidget {
   final Planned planned;
-
-  PlannedCard(this.planned);
+  final Function update;
+  PlannedCard(this.planned, this.update);
 
   @override
   Widget build(BuildContext context) {
@@ -22,27 +28,71 @@ class PlannedCard extends StatelessWidget {
               padding: EdgeInsets.all(10.r),
               child: Row(
                 children: [
-                  Text(planned.amountOfMoney.toString(),
-                      style: TextStyle(
-                          fontFamily: "Prompt",
-                          fontSize: 20.r,
-                          color: StyleUtil.primaryColor,
-                          fontWeight: FontWeight.bold)),
-                  Icon(
-                    !planned.isIncome
-                        ? Icons.arrow_downward
-                        : Icons.arrow_upward,
-                    color: StyleUtil.primaryColor,
-                    size: 30.r,
+                  GestureDetector(
+                    onTap: () {
+                      AddAmount(context, "CHANGE AMOUNT", (controllerAmount) {
+                        if (controllerAmount.text.contains(",")) {
+                          controllerAmount.text.replaceAll(",", ".");
+                        }
+                        var amount = double.tryParse(controllerAmount.text);
+                        if (amount != null) {
+                          planned.amountOfMoney = amount;
+                          GetIt.I<SqliteService>()
+                              .changePlannedAmountOfMoney(planned);
+                          update(0);
+                          Navigator.pop(context);
+                        } else {
+                          BotToast.showText(text: "Wrong Amount");
+                        }
+                      });
+                    },
+                    child: Text(planned.amountOfMoney.toString(),
+                        style: TextStyle(
+                            fontFamily: "Prompt",
+                            fontSize: 20.r,
+                            color: StyleUtil.primaryColor,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  VerticalDivider(),
+                  GestureDetector(
+                    onTap: () {
+                      AreYouSure(context, "CHANGE OPERATION?", () {
+                        planned.isIncome = !planned.isIncome;
+                        GetIt.I<SqliteService>().changePlannedIsIncome(planned);
+                        update(0);
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Icon(
+                      planned.isIncome
+                          ? Icons.arrow_downward
+                          : Icons.arrow_upward,
+                      color: StyleUtil.primaryColor,
+                      size: 30.r,
+                    ),
                   ),
                   VerticalDivider(),
                   Expanded(
-                    child: Text(planned.name,
-                        style: TextStyle(
-                            fontFamily: "Prompt",
-                            fontSize: 15.r,
-                            color: StyleUtil.primaryColor,
-                            fontWeight: FontWeight.bold)),
+                    child: GestureDetector(
+                      onTap: () {
+                        RenameOrDelete(context, (controller) {
+                          planned.name = controller.text;
+                          GetIt.I<SqliteService>().changePlannedName(planned);
+                          update(0);
+                          Navigator.pop(context);
+                        }, () {
+                          GetIt.I<SqliteService>().deletePlanned(planned);
+                          update(0);
+                          Navigator.pop(context);
+                        });
+                      },
+                      child: Text(planned.name,
+                          style: TextStyle(
+                              fontFamily: "Prompt",
+                              fontSize: 15.r,
+                              color: StyleUtil.primaryColor,
+                              fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ],
               ),

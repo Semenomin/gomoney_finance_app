@@ -3,6 +3,7 @@ class Partner {
   late String name;
   late double lendAmount;
   late double borrowAmount;
+  late String currency;
   String? userId;
   String? groupId;
   Partner(
@@ -10,6 +11,7 @@ class Partner {
       required this.name,
       required this.lendAmount,
       required this.borrowAmount,
+      required this.currency,
       this.userId,
       this.groupId});
 
@@ -18,6 +20,7 @@ class Partner {
     this.name = map["name"];
     this.lendAmount = map["lendAmount"];
     this.borrowAmount = map["borrowAmount"];
+    this.currency = map["currency"];
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];
   }

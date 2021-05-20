@@ -48,6 +48,7 @@ class BoxCard extends StatelessWidget {
                     name: "Box " + box!.name + " Add",
                     isIncome: false,
                     date: DateTime.now(),
+                    currency: "",
                     amountOfMoney: double.parse(controller.text)),
                 moneyBox: box);
             update!(selectedPage);
@@ -88,6 +89,18 @@ class BoxCard extends StatelessWidget {
                   ),
                 )),
               ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  box!.currency,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: "Prompt",
+                      fontSize: 20.r,
+                      color: StyleUtil.secondaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
         ),
@@ -126,11 +139,5 @@ class BoxCard extends StatelessWidget {
           ),
         ),
       );
-  }
-
-  void onDeletePartner(partner, context) {
-    GetIt.I<SqliteService>().deletePartner(partner);
-    update!(selectedPage! - 1);
-    Navigator.pop(context);
   }
 }

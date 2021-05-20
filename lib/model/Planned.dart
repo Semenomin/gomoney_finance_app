@@ -5,6 +5,7 @@ class Planned {
   late DateTime dateFrom;
   late DateTime dateTo;
   late bool isIncome;
+  late String currency;
   String? userId;
   String? groupId;
   Planned(
@@ -14,12 +15,14 @@ class Planned {
       required this.dateFrom,
       required this.dateTo,
       required this.isIncome,
+      required this.currency,
       this.userId,
       this.groupId});
 
   Planned.fromMap(Map<String, dynamic> map) {
     this.id = map["id"];
     this.name = map["name"];
+    this.currency = map["currency"];
     this.isIncome = (map["isIncome"] == "true" ? true : false);
     this.amountOfMoney = map["amountOfMoney"];
     this.dateFrom = DateTime.parse(map["dateFrom"]);

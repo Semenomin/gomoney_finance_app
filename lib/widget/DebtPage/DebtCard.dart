@@ -80,6 +80,7 @@ class DebtCard extends StatelessWidget {
                                         name: "Debt Lend " + partner!.name,
                                         isIncome: false,
                                         date: DateTime.now(),
+                                        currency: "",
                                         amountOfMoney:
                                             double.parse(controller.text),
                                         partnerId: partner!.id),
@@ -111,7 +112,7 @@ class DebtCard extends StatelessWidget {
                                           partner!.lendAmount
                                                   .toStringAsFixed(2) +
                                               " " +
-                                              currensy,
+                                              partner!.currency,
                                           style: TextStyle(
                                               fontSize: 20.r,
                                               fontFamily: "Prompt",
@@ -134,6 +135,7 @@ class DebtCard extends StatelessWidget {
                                         name: "Debt Borrow " + partner!.name,
                                         isIncome: true,
                                         date: DateTime.now(),
+                                        currency: "",
                                         amountOfMoney:
                                             double.parse(controller.text),
                                         partnerId: partner!.id),
@@ -165,7 +167,7 @@ class DebtCard extends StatelessWidget {
                                           partner!.borrowAmount
                                                   .toStringAsFixed(2) +
                                               " " +
-                                              currensy,
+                                              partner!.currency,
                                           style: TextStyle(
                                               fontSize: 20.r,
                                               fontFamily: "Prompt",
@@ -193,6 +195,7 @@ class DebtCard extends StatelessWidget {
               name: controller.text,
               lendAmount: 0.0,
               borrowAmount: 0.0,
+              currency: "",
               userId: GetIt.I<PreferencesService>().getToken()));
           update!(0);
           Navigator.pop(context);

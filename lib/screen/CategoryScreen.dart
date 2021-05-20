@@ -142,7 +142,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       .data![
                                           transactions.data!.length - index - 1]
                                       .amountOfMoney,
-                                  currency: "RUB");
+                                  currency: transactions
+                                      .data![
+                                          transactions.data!.length - index - 1]
+                                      .currency);
                             });
                       } else
                         return LoadingPage(StyleUtil.secondaryColor);
@@ -161,7 +164,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   double.parse(amountController.text),
                               name: nameController.text,
                               date: DateTime.now(),
-                              id: Uuid().v4()),
+                              id: Uuid().v4(),
+                              currency: ""),
                           category: widget.category);
                       Navigator.pop(context);
                     });

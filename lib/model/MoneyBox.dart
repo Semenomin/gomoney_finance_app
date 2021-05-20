@@ -3,6 +3,7 @@ class MoneyBox {
   late String name;
   late double amountOfMoney;
   late double aim;
+  late String currency;
   String? userId;
   String? groupId;
   MoneyBox(
@@ -10,6 +11,7 @@ class MoneyBox {
       required this.name,
       required this.amountOfMoney,
       required this.aim,
+      required this.currency,
       this.userId,
       this.groupId});
 
@@ -18,6 +20,7 @@ class MoneyBox {
     this.name = map["name"];
     this.amountOfMoney = map["amountOfMoney"];
     this.aim = map["aim"];
+    this.currency = map["currency"];
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];
   }

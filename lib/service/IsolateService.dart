@@ -122,7 +122,8 @@ class MyIsolates {
                 name: "Planned " + plan.name,
                 isIncome: plan.isIncome,
                 date: DateTime.now(),
-                amountOfMoney: plan.amountOfMoney));
+                amountOfMoney: plan.amountOfMoney,
+                currency: service.getCurrency()));
           }
         }
       }

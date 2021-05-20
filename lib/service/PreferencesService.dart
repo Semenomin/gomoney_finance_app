@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
@@ -55,5 +56,14 @@ class PreferencesService {
 
   int? getBackupLoop() {
     return _prefs?.getInt("backupLoop") ?? 2;
+  }
+
+  void setCurrency(Currency cur) {
+    _prefs?.setString("currency", cur.code);
+  }
+
+  String getCurrency() {
+    var r = _prefs?.getString("currency") ?? "USD";
+    return r;
   }
 }
