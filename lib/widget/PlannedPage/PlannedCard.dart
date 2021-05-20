@@ -1,9 +1,14 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:gomoney_finance_app/model/Planned.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PlannedCard extends StatelessWidget {
+  final Planned planned;
+
+  PlannedCard(this.planned);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -17,20 +22,22 @@ class PlannedCard extends StatelessWidget {
               padding: EdgeInsets.all(10.r),
               child: Row(
                 children: [
-                  Text("200\$",
+                  Text(planned.amountOfMoney.toString(),
                       style: TextStyle(
                           fontFamily: "Prompt",
                           fontSize: 20.r,
                           color: StyleUtil.primaryColor,
                           fontWeight: FontWeight.bold)),
                   Icon(
-                    Icons.arrow_downward,
+                    !planned.isIncome
+                        ? Icons.arrow_downward
+                        : Icons.arrow_upward,
                     color: StyleUtil.primaryColor,
                     size: 30.r,
                   ),
                   VerticalDivider(),
                   Expanded(
-                    child: Text("Зарплата БелТрансСпутник",
+                    child: Text(planned.name,
                         style: TextStyle(
                             fontFamily: "Prompt",
                             fontSize: 15.r,
@@ -53,7 +60,12 @@ class PlannedCard extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Center(
-                                    child: Text("2 дня",
+                                    child: Text(
+                                        planned.dateTo
+                                                .difference(DateTime.now())
+                                                .inDays
+                                                .toString() +
+                                            " Days",
                                         style: TextStyle(
                                             fontFamily: "Prompt",
                                             fontSize: 25.r,
@@ -63,10 +75,8 @@ class PlannedCard extends StatelessWidget {
                                   PieChartData(
                                       centerSpaceRadius: 55.r,
                                       sections: showingSections(
-                                          dateFrom:
-                                              DateTime(2021, 1, 10, 12, 0, 0),
-                                          dateTo:
-                                              DateTime(2021, 6, 10, 12, 0, 0))),
+                                          dateFrom: planned.dateFrom,
+                                          dateTo: planned.dateTo)),
                                   swapAnimationDuration:
                                       Duration(milliseconds: 150), // Optional
                                   swapAnimationCurve: Curves.linear, // Optional
@@ -76,7 +86,7 @@ class PlannedCard extends StatelessWidget {
                           ),
                           FittedBox(
                             child: Text(
-                                DateTime.now().toString().substring(0, 10),
+                                planned.dateTo.toString().substring(0, 10),
                                 style: TextStyle(
                                     fontFamily: "Prompt",
                                     color: StyleUtil.primaryColor,

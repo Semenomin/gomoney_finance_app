@@ -3,26 +3,40 @@ import 'dart:isolate';
 import 'dart:io' as io;
 import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:get_it/get_it.dart';
+import 'package:gomoney_finance_app/model/FinTransaction.dart';
+import 'package:gomoney_finance_app/model/Planned.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/GoogleHttpClient.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class IsolateService {
-  FlutterIsolate? isol;
+  FlutterIsolate? backupIsolate;
+  FlutterIsolate? plannedIsolate;
+
   Future<void> followBackup() async {
-    if (isol != null) isol!.kill();
+    if (backupIsolate != null) backupIsolate!.kill();
     ReceivePort receivePort = ReceivePort();
 
     List<dynamic> list = [receivePort.sendPort];
-    isol = await FlutterIsolate.spawn(MyIsolates.backupIsolate, list);
+    backupIsolate = await FlutterIsolate.spawn(MyIsolates.backupIsolate, list);
     receivePort.listen((data) {
-      if (data == 0) isol!.kill();
+      if (data == 0) backupIsolate!.kill();
       if (data == 1)
         GetIt.I<PreferencesService>().setDateOfLastBackup(DateTime.now());
     });
+  }
+
+  Future<void> followPlanned() async {
+    if (backupIsolate != null) backupIsolate!.kill();
+    ReceivePort receivePort = ReceivePort();
+
+    List<dynamic> list = [receivePort.sendPort];
+    backupIsolate = await FlutterIsolate.spawn(MyIsolates.plannedIsolate, list);
+    receivePort.listen((data) {});
   }
 }
 
@@ -72,6 +86,30 @@ class MyIsolates {
           message[0].send(0);
       } else
         message[0].send(0);
+    });
+  }
+
+  static void plannedIsolate(List<dynamic> message) async {
+    SqliteService sqlite = SqliteService();
+    Timer.periodic(Duration(seconds: 10), (timer) async {
+      List<Planned> planned = await sqlite.getAllPlanned();
+      if (planned.length != 0) {
+        for (Planned plan in planned) {
+          if (plan.dateTo.difference(DateTime.now()).inDays <= 0) {
+            var nextDate = plan.dateFrom.add(
+                Duration(days: plan.dateTo.difference(plan.dateFrom).inDays));
+            plan.dateFrom = plan.dateTo;
+            plan.dateTo = nextDate;
+            sqlite.updatePlanned(plan);
+            sqlite.addTransaction(FinTransaction(
+                id: Uuid().v4(),
+                name: "Planned " + plan.name,
+                isIncome: plan.isIncome,
+                date: DateTime.now(),
+                amountOfMoney: plan.amountOfMoney));
+          }
+        }
+      }
     });
   }
 }

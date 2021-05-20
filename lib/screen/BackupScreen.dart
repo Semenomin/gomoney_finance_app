@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gomoney_finance_app/dialogs/Loading.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gomoney_finance_app/widget/backupScreen/BackupWidget.dart';
+import 'package:gomoney_finance_app/widget/BackupScreen/BackupWidget.dart';
 
 class BackupScreen extends StatelessWidget {
   @override

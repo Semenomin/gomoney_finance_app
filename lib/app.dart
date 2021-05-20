@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/screen/LoginScreen.dart';
 import 'package:gomoney_finance_app/screen/MainScreen.dart';
+import 'package:gomoney_finance_app/service/IsolateService.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
                 future: GetIt.I.allReady(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    GetIt.I<IsolateService>().followPlanned();
                     return MaterialApp(
                       builder: (context, child) {
                         child = botToastBuilder(context, child);

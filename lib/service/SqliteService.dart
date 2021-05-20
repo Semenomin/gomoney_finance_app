@@ -179,6 +179,17 @@ class SqliteService {
         'INSERT INTO Planned(id, Users_id, Group_id, amountOfMoney, name, isIncome, dateTo, dateFrom) VALUES("${Uuid().v4()}","${GetIt.I<PreferencesService>().getToken()}", null , ${planned.amountOfMoney} , "${planned.name}", "${planned.isIncome}", "${planned.dateTo}", "${planned.dateFrom}")');
   }
 
+  Future<List<Planned>> getAllPlanned() async {
+    var res = await _db!.rawQuery(
+        'Select * from Planned where Users_id = "${GetIt.I<PreferencesService>().getToken()}"');
+    return List.generate(res.length, (index) => Planned.fromMap(res[index]));
+  }
+
+  Future<void> updatePlanned(Planned planned) async {
+    await _db!.rawUpdate(
+        "UPDATE Planned set dateFrom = ${planned.dateFrom}, dateTo = ${planned.dateTo} where id = '${planned.id}'");
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //?                              CATEGORY                                  ?//
   //////////////////////////////////////////////////////////////////////////////
@@ -328,6 +339,14 @@ class SqliteService {
             "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
         await txn.rawUpdate(
             "UPDATE MoneyBox set amountOfMoney = (select amountOfMoney from MoneyBox where id = '${moneyBox!.id}') + ${transaction.amountOfMoney} where id = '${moneyBox.id}'");
+      } else {
+        if (transaction.isIncome) {
+          await txn.rawUpdate(
+              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+        } else {
+          await txn.rawUpdate(
+              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+        }
       }
       await txn.rawInsert(
           'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $partnerId, $moneyBoxId, $categoryId)');

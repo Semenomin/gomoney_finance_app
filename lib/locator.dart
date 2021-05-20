@@ -5,11 +5,13 @@ import 'package:gomoney_finance_app/service/IsolateService.dart';
 import 'package:gomoney_finance_app/service/PackageInfoService.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
+import 'package:gomoney_finance_app/service/ConnectionService.dart';
 
 GetIt locator = GetIt.instance;
 
 void setupLocator() async {
   locator.registerLazySingleton(() => IsolateService());
+  locator.registerLazySingleton(() => ConnectionService());
   locator.registerSingletonAsync<BackupService>(() async {
     final backupService = BackupService();
     await backupService.init();

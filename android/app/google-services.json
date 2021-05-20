@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "978848093454-l6toik57cpisrprm60bhb5ugurrfflch.apps.googleusercontent.com",
+          "client_id": "978848093454-72on27ut1cdrdonmivdhbuil0v6mtbdb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.semenomin.gooney_finance_app",
-            "certificate_hash": "49addda3ddad99e6165abd64976a79a47e32ae0e"
+            "certificate_hash": "09d53c35e8475140318e3415b0928eb109efd989"
           }
         },
         {

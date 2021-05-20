@@ -343,6 +343,8 @@ class _ScannerPageState extends State<ScannerPage> {
         }
       }
       output.add(resultNum);
+    } else {
+      output.add(0.0);
     }
     return output;
   }
