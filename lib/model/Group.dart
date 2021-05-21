@@ -10,4 +10,12 @@ class Group {
     this.name = map["name"];
     this.amount = map["amount"];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'amount': amount,
+    };
+  }
 }

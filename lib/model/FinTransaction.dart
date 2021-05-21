@@ -30,4 +30,18 @@ class FinTransaction {
     this.moneyBoxId = map["MoneyBox_id"];
     this.categoryId = map["Category_id"];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'isIncome': isIncome.toString(),
+      'date': date.toString(),
+      'amountOfMoney': amountOfMoney,
+      'currency': currency,
+      'Partner_id': partnerId,
+      'MoneyBox_id': moneyBoxId,
+      'Category_id': categoryId,
+    };
+  }
 }

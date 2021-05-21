@@ -38,7 +38,7 @@ class BoxCard extends StatelessWidget {
             Navigator.pop(context);
           });
         },
-        onTap: () {
+        onTap: () async {
           AddAmount(context, "ADD MONEY", (controller) {
             if (controller.text.contains(",")) {
               controller.text = controller.text.replaceAll(",", ".");
@@ -50,6 +50,7 @@ class BoxCard extends StatelessWidget {
                     isIncome: false,
                     date: DateTime.now(),
                     currency: "",
+                    moneyBoxId: box!.id,
                     amountOfMoney: double.parse(controller.text)),
                 moneyBox: box);
             update!(selectedPage);

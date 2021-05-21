@@ -9,6 +9,7 @@ import 'package:gomoney_finance_app/model/Partner.dart';
 import 'package:gomoney_finance_app/model/User.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/screen/ShareToUserScreen.dart';
+import 'package:gomoney_finance_app/service/ConnectionService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -233,6 +234,7 @@ class ProfilePage extends StatelessWidget {
                             onTap: () async {
                               Permission.camera.request();
                               List<User> users = [];
+                              List<String> pushes = [];
                               const SECRET_KEY =
                                   "2020_PRIVATES_KEYS_ENCRYPTS_2020";
                               String cameraScanResult = await scanner.scan();
@@ -250,20 +252,29 @@ class ProfilePage extends StatelessWidget {
                                   amount: 0.0));
                               for (var user in json["users"]) {
                                 users.add(User.fromMap(user));
+                                pushes.add(User.fromMap(user).pushId);
                                 GetIt.I<SqliteService>()
                                     .addUser(User.fromMap(user));
                               }
                               for (var partner in json["partners"]) {
                                 GetIt.I<SqliteService>()
                                     .addPartner(Partner.fromMap(partner));
+                                GetIt.I<SqliteService>().addGroupPartners(
+                                    Partner.fromMap(partner), json["group_id"]);
                               }
                               for (var moneyBox in json["moneyBoxes"]) {
                                 GetIt.I<SqliteService>()
                                     .addMoneyBox(MoneyBox.fromMap(moneyBox));
+                                GetIt.I<SqliteService>().addGroupMoneyBoxes(
+                                    MoneyBox.fromMap(moneyBox),
+                                    json["group_id"]);
                               }
                               for (var category in json["categories"]) {
                                 GetIt.I<SqliteService>()
                                     .addCategory(Category.fromMap(category));
+                                GetIt.I<SqliteService>().addGroupCategories(
+                                    Category.fromMap(category),
+                                    json["group_id"]);
                               }
                               GetIt.I<SqliteService>().addGroupUsers(
                                   Group(
@@ -271,6 +282,13 @@ class ProfilePage extends StatelessWidget {
                                       name: json["group_name"],
                                       amount: 0.0),
                                   users);
+                              GetIt.I<ConnectionService>().confirmInvite(
+                                  Group(
+                                      id: json["group_id"],
+                                      name: json["group_name"],
+                                      amount: 0.0),
+                                  pushes,
+                                  await GetIt.I<SqliteService>().getUser());
                             },
                             title: Text("Join To Group",
                                 style: TextStyle(

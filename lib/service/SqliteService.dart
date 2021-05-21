@@ -10,6 +10,7 @@ import 'package:gomoney_finance_app/model/Scan.dart';
 import 'package:gomoney_finance_app/model/User.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
+import 'ConnectionService.dart';
 import 'PreferencesService.dart';
 import 'dart:convert' as convert;
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -345,12 +346,35 @@ class SqliteService {
   }
 
   Future<User> getUser() async {
-    var res = await _db!.rawQuery(
-        'Select * from Users where id = "${GetIt.I<PreferencesService>().getToken()}" ');
+    var res = await _db!.rawQuery('Select * from Users');
     if (res.length == 0) {
       return User(id: Uuid().v4(), pushId: "", name: "");
     }
     return User.fromMap(res.first);
+  }
+
+  Future<Group?> getGroupByMoneyBoxId(String id) async {
+    var q =
+        'Select Groups.id, Groups.name, Groups.amount from GroupMoneyBoxes inner join Groups on GroupMoneyBoxes.Group_id = Groups.id where GroupMoneyBoxes.MoneyBox_id = "$id"';
+    var res = await _db!.rawQuery(q);
+    if (res.isEmpty) return null;
+    return Group.fromMap(res.first);
+  }
+
+  Future<Group?> getGroupByPartnerId(String id) async {
+    var q =
+        'Select Groups.id, Groups.name, Groups.amount from GroupPartners inner join Groups on GroupPartners.Group_id = Groups.id where GroupPartners.Partner_id = "$id"';
+    var res = await _db!.rawQuery(q);
+    if (res.isEmpty) return null;
+    return Group.fromMap(res.first);
+  }
+
+  Future<Group?> getGroupByCategoryId(String id) async {
+    var q =
+        'Select Groups.id, Groups.name, Groups.amount from GroupCategories inner join Groups on GroupCategories.Group_id = Groups.id where GroupCategories.Category_id = "$id"';
+    var res = await _db!.rawQuery(q);
+    if (res.isEmpty) return null;
+    return Group.fromMap(res.first);
   }
 
   Future<List<User>> getGroupUsers(Group group) async {
@@ -358,7 +382,13 @@ class SqliteService {
         'Select Users.id , Users.name, Users.amountOfMoney, Users.pushId from UserGroups inner join Users on UserGroups.Users_id = Users.id where UserGroups.Group_id = "${group.id}"';
     var res = await _db!.rawQuery(q);
     return List.generate(res.length, (index) => User.fromMap(res[index]));
-    ;
+  }
+
+  Future<List<String>> getGroupPushes(Group group) async {
+    var q =
+        'Select Users.pushId from UserGroups inner join Users on UserGroups.Users_id = Users.id where UserGroups.Group_id = "${group.id}"';
+    var res = await _db!.rawQuery(q);
+    return List.generate(res.length, (index) => res[index]["pushId"] as String);
   }
 
   Future<List<String>> getGroupMoneyBoxes(String groupId) async {
@@ -447,7 +477,11 @@ class SqliteService {
   }
 
   void addTransaction(FinTransaction transaction,
-      {Partner? partner, Category? category, MoneyBox? moneyBox}) async {
+      {Partner? partner,
+      Category? category,
+      MoneyBox? moneyBox,
+      bool? isPush}) async {
+    Group? group;
     String? partnerId;
     String? moneyBoxId;
     String? categoryId;
@@ -456,72 +490,78 @@ class SqliteService {
     if (category != null) categoryId = "\"" + category.id + "\"";
     if (moneyBox != null) moneyBoxId = "\"" + moneyBox.id + "\"";
 
-    await _db!.transaction((txn) async {
-      if (transaction.partnerId != null) {
-        currency = partner!.currency;
-        if (!transaction.isIncome) {
-          double lendAmount = partner.lendAmount;
-          double borrowAmount = partner.borrowAmount;
-          borrowAmount = borrowAmount - transaction.amountOfMoney;
-          if (borrowAmount < 0) {
-            lendAmount += -borrowAmount;
-            borrowAmount = 0;
-          } else {
-            lendAmount = 0;
-          }
-          await txn.rawUpdate(
-              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
-
-          await txn.rawUpdate(
-              "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
+    if (transaction.partnerId != null) {
+      group = await GetIt.I<SqliteService>().getGroupByPartnerId(partner!.id);
+      currency = partner.currency;
+      if (!transaction.isIncome) {
+        double lendAmount = partner.lendAmount;
+        double borrowAmount = partner.borrowAmount;
+        borrowAmount = borrowAmount - transaction.amountOfMoney;
+        if (borrowAmount < 0) {
+          lendAmount += -borrowAmount;
+          borrowAmount = 0;
         } else {
-          double lendAmount = partner.lendAmount;
-          double borrowAmount = partner.borrowAmount;
-          lendAmount = lendAmount - transaction.amountOfMoney;
-          if (lendAmount < 0) {
-            borrowAmount += -lendAmount;
-            lendAmount = 0;
-          } else {
-            borrowAmount = 0;
-          }
-
-          await txn.rawUpdate(
-              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
-          await txn.rawUpdate(
-              "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
+          lendAmount = 0;
         }
-      } else if (categoryId != null) {
-        if (transaction.isIncome) {
-          await txn.rawUpdate(
-              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
-
-          await txn.rawUpdate(
-              "UPDATE Category set amountOfMoney = (select amountOfMoney from Category where id = $categoryId) + ${transaction.amountOfMoney} where id = $categoryId");
-        } else {
-          await txn.rawUpdate(
-              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
-
-          await txn.rawUpdate(
-              "UPDATE Category set amountOfMoney = (select amountOfMoney from Category where id = $categoryId) - ${transaction.amountOfMoney} where id = $categoryId");
-        }
-      } else if (moneyBoxId != null) {
-        currency = moneyBox!.currency;
-        await txn.rawUpdate(
+        await _db!.rawUpdate(
             "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
-        await txn.rawUpdate(
-            "UPDATE MoneyBox set amountOfMoney = (select amountOfMoney from MoneyBox where id = '${moneyBox.id}') + ${transaction.amountOfMoney} where id = '${moneyBox.id}'");
+
+        await _db!.rawUpdate(
+            "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
       } else {
-        if (transaction.isIncome) {
-          await txn.rawUpdate(
-              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+        double lendAmount = partner.lendAmount;
+        double borrowAmount = partner.borrowAmount;
+        lendAmount = lendAmount - transaction.amountOfMoney;
+        if (lendAmount < 0) {
+          borrowAmount += -lendAmount;
+          lendAmount = 0;
         } else {
-          await txn.rawUpdate(
-              "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+          borrowAmount = 0;
         }
+
+        await _db!.rawUpdate(
+            "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+        await _db!.rawUpdate(
+            "UPDATE Partner set lendAmount = $lendAmount, borrowAmount = $borrowAmount where id = $partnerId");
       }
-      await txn.rawInsert(
-          'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id, currency) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $partnerId, $moneyBoxId, $categoryId, "${currency == null ? GetIt.I<PreferencesService>().getCurrency() : currency}")');
-    });
+    } else if (categoryId != null) {
+      group = await GetIt.I<SqliteService>().getGroupByCategoryId(category!.id);
+      if (transaction.isIncome) {
+        await _db!.rawUpdate(
+            "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+
+        await _db!.rawUpdate(
+            "UPDATE Category set amountOfMoney = (select amountOfMoney from Category where id = $categoryId) + ${transaction.amountOfMoney} where id = $categoryId");
+      } else {
+        await _db!.rawUpdate(
+            "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+
+        await _db!.rawUpdate(
+            "UPDATE Category set amountOfMoney = (select amountOfMoney from Category where id = $categoryId) - ${transaction.amountOfMoney} where id = $categoryId");
+      }
+    } else if (moneyBoxId != null) {
+      group = await GetIt.I<SqliteService>().getGroupByMoneyBoxId(moneyBox!.id);
+      currency = moneyBox.currency;
+      await _db!.rawUpdate(
+          "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+      await _db!.rawUpdate(
+          "UPDATE MoneyBox set amountOfMoney = (select amountOfMoney from MoneyBox where id = '${moneyBox.id}') + ${transaction.amountOfMoney} where id = '${moneyBox.id}'");
+    } else {
+      if (transaction.isIncome) {
+        await _db!.rawUpdate(
+            "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') + ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+      } else {
+        await _db!.rawUpdate(
+            "UPDATE Users set amountOfMoney = (select amountOfMoney from Users where id = '${GetIt.I<PreferencesService>().getToken()}') - ${transaction.amountOfMoney} where id = '${GetIt.I<PreferencesService>().getToken()}'");
+      }
+    }
+    if (isPush == null) {
+      if (group != null) {
+        GetIt.I<ConnectionService>().sendOperation(group, transaction);
+      }
+    }
+    await _db!.rawInsert(
+        'INSERT INTO FinTransaction(id, name, isIncome, date, amountOfMoney, Partner_id, MoneyBox_id, Category_id, currency) VALUES("${transaction.id}", "${transaction.name}", "${transaction.isIncome}", "${transaction.date}", ${transaction.amountOfMoney}, $partnerId, $moneyBoxId, $categoryId, "${currency == null ? GetIt.I<PreferencesService>().getCurrency() : currency}")');
   }
 
   Future<List<FinTransaction>> getTransactions(

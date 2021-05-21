@@ -164,6 +164,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               amountOfMoney:
                                   double.parse(amountController.text),
                               name: nameController.text,
+                              categoryId: widget.category.id,
                               date: DateTime.now(),
                               id: Uuid().v4(),
                               currency: ""),

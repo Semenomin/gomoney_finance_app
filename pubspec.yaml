@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_local_notifications: ^5.0.0+2
   flutter_screenutil: ^5.0.0-nullsafety.11
   shared_preferences: ^2.0.4
   modal_bottom_sheet: ^2.0.0
