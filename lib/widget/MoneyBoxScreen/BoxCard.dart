@@ -9,6 +9,7 @@ import 'package:gomoney_finance_app/dialogs/AddNameAndAmount.dart';
 import 'package:gomoney_finance_app/dialogs/AreYouSure.dart';
 import 'package:gomoney_finance_app/model/MoneyBox.dart';
 import 'package:gomoney_finance_app/model/index.dart';
+import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:uuid/uuid.dart';
@@ -114,8 +115,13 @@ class BoxCard extends StatelessWidget {
           }
           var amount = double.tryParse(controllerAmount.text);
           if (amount != null) {
-            GetIt.I<SqliteService>().addMoneyBox(
-                controllerName.text, double.parse(controllerAmount.text));
+            GetIt.I<SqliteService>().addMoneyBox(MoneyBox(
+                id: Uuid().v4(),
+                name: controllerName.text,
+                amountOfMoney: 0.0,
+                aim: double.parse(controllerAmount.text),
+                userId: GetIt.I<PreferencesService>().getToken(),
+                currency: GetIt.I<PreferencesService>().getCurrency()));
             update!(selectedPage! + 1);
             Navigator.pop(context);
           } else {

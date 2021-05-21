@@ -24,4 +24,16 @@ class MoneyBox {
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'amountOfMoney': amountOfMoney,
+      'aim': aim,
+      'currency': currency,
+      'userId': userId,
+      'groupId': groupId,
+    };
+  }
 }

@@ -5,6 +5,7 @@ import 'package:gomoney_finance_app/model/Category.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:line_icons/line_icons.dart';
 
 class CategoryGridItem extends StatelessWidget {
   final Category category;
@@ -44,7 +45,7 @@ class CategoryGridItem extends StatelessWidget {
             Expanded(
               child: !isInit
                   ? Icon(
-                      category.icon,
+                      LineIcons.values[category.icon],
                       color: category.color,
                       size: 40.r,
                     )

@@ -6,12 +6,14 @@ import 'package:gomoney_finance_app/dialogs/AddName.dart';
 import 'package:gomoney_finance_app/model/Category.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/screen/CategoryScreen.dart';
+import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gomoney_finance_app/widget/CategoriesPage/CategoryGridItem.dart';
 import 'package:gomoney_finance_app/widget/Indicator.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:uuid/uuid.dart';
 
 class CategoriesPage extends StatefulWidget {
   @override
@@ -97,7 +99,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   if (index == categorys.data!.length)
                                     return CategoryGridItem(
                                         Category(
-                                            icon: LineIcons.code,
+                                            icon: "code",
                                             amountOfMoney: 223,
                                             name: "fef",
                                             color: Colors.white,
@@ -106,8 +108,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                       AddName(context, "ADD CATEGORY",
                                           (controller) {
                                         if (controller.text != "") {
-                                          GetIt.I<SqliteService>()
-                                              .addCategory(controller.text);
+                                          GetIt.I<SqliteService>().addCategory(
+                                              Category(
+                                                  id: Uuid().v4(),
+                                                  userId: GetIt.I<
+                                                          PreferencesService>()
+                                                      .getToken(),
+                                                  name: controller.text,
+                                                  amountOfMoney: 0.0,
+                                                  color: Colors.white,
+                                                  icon: "ban"));
                                           update();
                                           Navigator.pop(context);
                                         } else {

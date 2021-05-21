@@ -16,4 +16,13 @@ class User {
     this.amountOfMoney = map["amountOfMoney"];
     this.pushId = map["pushId"];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'amountOfMoney': amountOfMoney,
+      'pushId': pushId,
+    };
+  }
 }

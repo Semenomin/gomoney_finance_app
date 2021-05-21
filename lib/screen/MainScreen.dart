@@ -332,7 +332,9 @@ class _MainScreenState extends State<MainScreen> {
                   );
                   GetIt.I<PreferencesService>().deleteToken();
                   GetIt.I<PreferencesService>().deleteDateOfLastBackup();
-                  GetIt.I<IsolateService>().backupIsolate!.kill();
+                  if (GetIt.I<IsolateService>().backupIsolate != null) {
+                    GetIt.I<IsolateService>().backupIsolate!.kill();
+                  }
                   await GetIt.I<SqliteService>().clearAllTables();
                   await FirebaseAuth.instance.signOut();
                   await GoogleSignIn().disconnect();

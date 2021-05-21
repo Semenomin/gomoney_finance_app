@@ -9,6 +9,7 @@ import 'package:gomoney_finance_app/util/AppUtils.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gomoney_finance_app/widget/DebtPage/DebtHistoryListTile.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:o_color_picker/o_color_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../Enums.dart';
@@ -74,11 +75,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       child: Container(
                         height: 60.r,
                         width: 60.r,
-                        child: Icon(widget.category.icon, size: 40.r),
+                        child: Icon(LineIcons.values[widget.category.icon],
+                            size: 40.r),
                       )),
                   InkWell(
                     onTap: () {
-                      print("dwdw");
                       showDialog<void>(
                           context: context,
                           builder: (_) => Material(

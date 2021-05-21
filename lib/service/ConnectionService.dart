@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dio/dio.dart';
+import 'package:gomoney_finance_app/model/Group.dart';
+import 'package:gomoney_finance_app/model/User.dart';
 
 class ConnectionService {
   Dio? dio;
@@ -22,24 +24,19 @@ class ConnectionService {
     // };
   }
 
-  Future<void> fetchShedule() async {
+  Future<void> confirmInvite(
+      Group group, List<String> pushes, User user) async {
     try {
       Response response = await dio!.post(
         '/group/confirmInvite',
         data: jsonEncode({
-          "status": false,
-          "from_id": "dwfwgwgwg-gwegweg",
-          "from_name": "Anya",
-          "group_id": "qefwegweg",
-          "group_name": "Котики",
-          "to": [
-            "ddPngjfGTcuY12GnIyqQK0:APA91bH1TVF0oevzgi0xPqKn4SjTF6Btxsfws9EJMQF89oKPXXPjaHBSBfYZjFuPCgbU20WqMCKYd-rlok5LPoDcDYsc3Gd4IrN_UT5X0LcssNFgwVFLKvwgcqQ4l7B6J2sYU8VwS1J0"
-          ],
-          "data": {
-            "MoneyBoxes": [
-              {"id": "dqwdqwfqfqwf"}
-            ]
-          }
+          "status": true,
+          "from_id": user.id,
+          "from_name": user.name,
+          "group_id": group.id,
+          "group_name": group.name,
+          "to": pushes,
+          "data": {"User": user.toMap()}
         }),
         options: Options(contentType: Headers.jsonContentType),
       );

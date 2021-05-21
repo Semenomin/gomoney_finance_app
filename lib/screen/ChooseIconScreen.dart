@@ -70,10 +70,8 @@ class ChooseIconScreen extends StatelessWidget {
                                   GetIt.I<SqliteService>().changeCategoryIcon(
                                       category,
                                       LineIcons.values.keys.elementAt(index));
-                                  Navigator.pop(
-                                      context,
-                                      LineIcons.values[LineIcons.values.keys
-                                          .elementAt(index)]);
+                                  Navigator.pop(context,
+                                      LineIcons.values.keys.elementAt(index));
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(10),

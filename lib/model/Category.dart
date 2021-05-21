@@ -6,7 +6,7 @@ class Category {
   late String name;
   late double amountOfMoney;
   late Color color;
-  late IconData? icon;
+  late String? icon;
   String? userId;
   String? groupId;
   Category(
@@ -23,8 +23,20 @@ class Category {
     this.name = map["name"];
     this.amountOfMoney = map["amountOfMoney"];
     this.color = Color(map["color"]);
-    this.icon = LineIcons.values[map["icon"]];
+    this.icon = map["icon"];
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'amountOfMoney': amountOfMoney,
+      'color': color.value,
+      'icon': icon,
+      'userId': userId,
+      'groupId': groupId,
+    };
   }
 }

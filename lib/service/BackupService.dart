@@ -2,10 +2,8 @@ import 'package:gomoney_finance_app/service/IsolateService.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:gomoney_finance_app/screen/MainScreen.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/service/SqliteService.dart';
 import 'package:gomoney_finance_app/util/GoogleHttpClient.dart';

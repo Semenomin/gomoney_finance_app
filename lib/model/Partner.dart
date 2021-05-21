@@ -24,4 +24,16 @@ class Partner {
     this.userId = map["Users_id"];
     this.groupId = map["Group_id"];
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'lendAmount': lendAmount,
+      'borrowAmount': borrowAmount,
+      'currency': currency,
+      'userId': userId,
+      'groupId': groupId,
+    };
+  }
 }
