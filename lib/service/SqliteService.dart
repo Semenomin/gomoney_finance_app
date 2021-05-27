@@ -56,7 +56,6 @@ class SqliteService {
       await db.execute("""CREATE TABLE "Groups" (
             id TEXT NOT NULL,
             name TEXT,
-            amount REAL NOT NULL,
             PRIMARY KEY(id));
       """);
 
@@ -64,7 +63,6 @@ class SqliteService {
             id TEXT NOT NULL,
             "Users_id" TEXT NOT NULL,
             "Group_id" TEXT NOT NULL,
-            "amountPercent" INTEGER,CONSTRAINT "Users-UserGroups"
             FOREIGN KEY ("Users_id")
             REFERENCES "Users"(id)
             ,CONSTRAINT "Group-UserGroups"
