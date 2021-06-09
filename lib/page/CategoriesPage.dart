@@ -12,7 +12,6 @@ import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gomoney_finance_app/widget/CategoriesPage/CategoryGridItem.dart';
 import 'package:gomoney_finance_app/widget/Indicator.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoriesPage extends StatefulWidget {

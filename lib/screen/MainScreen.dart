@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/model/index.dart' as model;
 import 'package:gomoney_finance_app/page/AboutPage.dart';
 import 'package:gomoney_finance_app/page/CategoriesPage.dart';
-import 'package:gomoney_finance_app/page/DebtsPage.dart';
+import 'package:gomoney_finance_app/page/PartnersPage.dart';
 import 'package:gomoney_finance_app/page/HomePage.dart';
 import 'package:gomoney_finance_app/page/LoadingPage.dart';
 import 'package:gomoney_finance_app/page/MoneyBoxPage.dart';
@@ -203,7 +203,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       onTap: () {
                         setState(() {
-                          _page = DebtsPage();
+                          _page = PartnersPage();
                         });
                         if (!isMenuFixed(context)) Navigator.pop(context);
                       },

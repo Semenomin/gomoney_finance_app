@@ -59,7 +59,9 @@ class CategoryGridItem extends StatelessWidget {
               visible: !isInit,
               child: FittedBox(
                 child: Text(
-                  category.name,
+                  category.name.length >= 9
+                      ? category.name.substring(0, 9) + "..."
+                      : category.name,
                   style: TextStyle(
                       color: StyleUtil.primaryColor,
                       fontFamily: "Prompt",

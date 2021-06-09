@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return MaterialApp(
+                      debugShowCheckedModeBanner: false,
                       builder: (context, child) {
                         child = botToastBuilder(context, child);
                         return child;

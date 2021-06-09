@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
                 child: Text(
                   "GOMONEY",
                   style: TextStyle(
-                      fontSize: 55.r,
+                      fontSize: 50.r,
                       fontFamily: "Prompt",
                       fontWeight: FontWeight.bold,
                       color: StyleUtil.secondaryColor),

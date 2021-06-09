@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:gomoney_finance_app/model/Group.dart';
 import 'package:gomoney_finance_app/model/User.dart';
 import 'package:gomoney_finance_app/model/index.dart';
 
+import '../serverGoMoney.dart';
 import 'SqliteService.dart';
 
 class ConnectionService {
@@ -19,13 +22,13 @@ class ConnectionService {
       ..connectTimeout = 15000
       ..contentType = Headers.jsonContentType
       ..receiveTimeout = 15000;
-    // (dio!.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-    //     (client) {
-    //   SecurityContext sc = SecurityContext();
-    //   sc.setTrustedCertificatesBytes(serverGoMoney);
-    //   HttpClient httpClient = HttpClient(context: sc);
-    //   return httpClient;
-    // };
+    (dio!.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        (client) {
+      SecurityContext sc = SecurityContext();
+      sc.setTrustedCertificatesBytes(serverGoMoney);
+      HttpClient httpClient = HttpClient(context: sc);
+      return httpClient;
+    };
   }
 
   Future<void> confirmInvite(

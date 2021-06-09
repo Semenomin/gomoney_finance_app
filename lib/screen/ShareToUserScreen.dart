@@ -293,7 +293,6 @@ class _ShareToUserState extends State<ShareToUserScreen> {
           GetIt.I<SqliteService>().addGroupPartners(res[index - 1], groupId);
           partners.add(res[index - 1].toMap());
         }
-        ;
         if (res[index - 1] is Category) {
           GetIt.I<SqliteService>().addGroupCategories(res[index - 1], groupId);
           categories.add(res[index - 1].toMap());

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:gomoney_finance_app/dialogs/Loading.dart';
+import 'package:gomoney_finance_app/widget/Loading.dart';
 import 'package:gomoney_finance_app/service/PreferencesService.dart';
 import 'package:gomoney_finance_app/util/StyleUtils.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

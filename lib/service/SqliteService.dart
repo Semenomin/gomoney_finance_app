@@ -353,7 +353,7 @@ class SqliteService {
 
   Future<Group?> getGroupByMoneyBoxId(String id) async {
     var q =
-        'Select Groups.id, Groups.name, Groups.amount from GroupMoneyBoxes inner join Groups on GroupMoneyBoxes.Group_id = Groups.id where GroupMoneyBoxes.MoneyBox_id = "$id"';
+        'Select Groups.id, Groups.name from GroupMoneyBoxes inner join Groups on GroupMoneyBoxes.Group_id = Groups.id where GroupMoneyBoxes.MoneyBox_id = "$id"';
     var res = await _db!.rawQuery(q);
     if (res.isEmpty) return null;
     return Group.fromMap(res.first);
@@ -361,7 +361,7 @@ class SqliteService {
 
   Future<Group?> getGroupByPartnerId(String id) async {
     var q =
-        'Select Groups.id, Groups.name, Groups.amount from GroupPartners inner join Groups on GroupPartners.Group_id = Groups.id where GroupPartners.Partner_id = "$id"';
+        'Select Groups.id, Groups.name from GroupPartners inner join Groups on GroupPartners.Group_id = Groups.id where GroupPartners.Partner_id = "$id"';
     var res = await _db!.rawQuery(q);
     if (res.isEmpty) return null;
     return Group.fromMap(res.first);
@@ -369,7 +369,7 @@ class SqliteService {
 
   Future<Group?> getGroupByCategoryId(String id) async {
     var q =
-        'Select Groups.id, Groups.name, Groups.amount from GroupCategories inner join Groups on GroupCategories.Group_id = Groups.id where GroupCategories.Category_id = "$id"';
+        'Select Groups.id, Groups.name from GroupCategories inner join Groups on GroupCategories.Group_id = Groups.id where GroupCategories.Category_id = "$id"';
     var res = await _db!.rawQuery(q);
     if (res.isEmpty) return null;
     return Group.fromMap(res.first);

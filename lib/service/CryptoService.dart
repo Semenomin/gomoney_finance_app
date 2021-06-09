@@ -1,17 +1,20 @@
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class EncryptService {
-  static void encrypt(String text) {
-    final plainText = text;
-    final key = Key.fromUtf8("7XLZ6xyFMtY5cnGUiHi0Q4YV48gsJaPA");
-    final iv = IV.fromLength(16);
+  static const SECRET_KEY = "2020_PRIVATES_KEYS_ENCRYPTS_2020";
 
-    final encrypter = Encrypter(AES(key));
+  static String encryptText(String json) {
+    final key = encrypt.Key.fromUtf8(SECRET_KEY);
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypted = encrypter.encrypt(json, iv: iv);
+    return encrypted.base64;
+  }
 
-    final encrypted = encrypter.encrypt(plainText, iv: iv);
-    final decrypted = encrypter.decrypt(encrypted, iv: iv);
-
-    print(decrypted);
-    print(encrypted.base64);
+  static String decryptText(String text) {
+    final key = encrypt.Key.fromUtf8(SECRET_KEY);
+    final iv = encrypt.IV.fromLength(16);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    return encrypter.decrypt64(text, iv: iv);
   }
 }
